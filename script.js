@@ -1,155 +1,141 @@
-$(function () {
-  var cosmicArray = document.querySelectorAll('.cosmic-container div'),
-    $strawberry = $(".strawberry-container p"),
-    $strawText = new SplitText($strawberry, { type: "chars" }),
-    $comingSoon = $(".coming-soon p"),
-    $comingText = new SplitText($comingSoon, { type: "chars" });
-  var $canvas = $(".canvas"),
-    canvasWidth = $canvas.outerWidth(),
-    canvasHeight = $canvas.outerHeight(),
-    $streak = $(".streak");
+/* Credit and Thanks:
+Matrix - Particles.js;
+SliderJS - Ettrics;
+Design - Sara Mazal Web;
+Fonts - Google Fonts
+*/
 
-  var mtl = new TimelineMax({ repeat: -1, yoyo: true, repeatDelay: 5 });
-  mtl
-    .add(addCosmic(), "start")
-    .add(addStraw(), "start+=.75")
-    .add(shootingStar(), "start+=.75")
-    .add(addSoon());
-
-  function addCosmic() {
-    var tl = new TimelineMax();
-    tl.staggerFrom(
-      cosmicArray,
-      2,
-      {
-        opacity: 0,
-        left: 0,
-        scale: 0,
-        ease: Back.easeOut
-      },
-      0.25
-    );
-    return tl;
-  }
-
-  function addStraw() {
-    var tl = new TimelineMax();
-    tl.staggerFrom(
-      $strawText.chars,
-      3,
-      {
-        opacity: 0,
-        top: 25,
-        rotationY: 360,
-        ease: Elastic.easeOut,
-        transformOrigin: "0% 10%"
-      },
-      0.1
-    );
-    return tl;
-  }
-
-  function addSoon() {
-    var tl = new TimelineMax({ delay: 1 });
-
-    tl.from($comingSoon, 1.5, {
-      opacity: 0,
-      letterSpacing: 15,
-      scale: 3,
-      ease: Back.easeOut,
-      autoRound: false
-    });
-
-    return tl;
-  }
-
-  /*
-   * Adding Stars to the Field
-   */
-  function starField() {
-    var maxStars = 1000;
-    for (var i = 0; i < maxStars; i++) {
-      var elem = document.createElement("div");
-      var size = Math.floor(Math.random() * 4 + 1);
-      $(elem).addClass("star");
-      $(elem).css({
-        left: Math.floor(Math.random() * canvasWidth),
-        top: Math.floor(Math.random() * canvasHeight),
-        opacity: Math.random(),
-        width: size,
-        height: size
-      });
-
-      $canvas.append(elem);
-    }
-    var $star = $(".star");
-    var stl = new TimelineMax({ yoyo: true });
-    stl.add(
-      TweenMax.staggerTo(
-        $star.slice(1, maxStars / 10),
-        0.5,
-        {
-          autoAlpha: 0,
-          scale: 0,
-          yoyo: true,
-          repeat: -1,
-          repeatDelay: 1,
-          ease: Bounce.easeOut
-        },
-        0.15
-      )
-    );
-  }
-
-  /*
-   * Animating the Shooting Star
-   */
-  function shootingStar() {
-    var tl = new TimelineMax({}),
-      //scale = (Math.random() * 1.2 + .5);
-      scale = 1;
-    TweenMax.set($streak, {
-      left: canvasWidth / 2 + 140,
-      top: 0,
-      scale: 0
-    });
-    tl.fromTo(
-      $streak,
-      scale,
-      {
-        left: canvasWidth / 2 + 300,
-        top: -150,
-        scale: scale,
-        autoAlpha: 1,
-        ease: "slow"
-      },
-      {
-        left: "-=750",
-        top: "+=750",
-        scale: 0,
-        autoAlpha: 0,
-        ease: "slow"
+window.onload = function () {
+  Particles.init({
+    selector: ".background"
+  });
+};
+const particles = Particles.init({
+  selector: ".background",
+  color: ["#03dac6", "#ff0266", "#000000"],
+  connectParticles: true,
+  responsive: [
+    {
+      breakpoint: 768,
+      options: {
+        color: ["#faebd7", "#03dac6", "#ff0266"],
+        maxParticles: 43,
+        connectParticles: false
       }
-    );
-
-    return tl;
-  }
-
-  starField();
+    }
+  ]
 });
 
-var fps = document.getElementById("fps"),
-  startTime = Date.now(),
-  frame = 0;
-
-function tick() {
-  var time = Date.now();
-  frame++;
-  if (time - startTime > 1000) {
-    fps.innerHTML = (frame / ((time - startTime) / 1000)).toFixed(1) + " fps";
-    startTime = time;
-    frame = 0;
+class NavigationPage {
+  constructor() {
+    this.currentId = null;
+    this.currentTab = null;
+    this.tabContainerHeight = 70;
+    this.lastScroll = 0;
+    let self = this;
+    $(".nav-tab").click(function () {
+      self.onTabClick(event, $(this));
+    });
+    $(window).scroll(() => {
+      this.onScroll();
+    });
+    $(window).resize(() => {
+      this.onResize();
+    });
   }
-  window.requestAnimationFrame(tick);
+
+  onTabClick(event, element) {
+    event.preventDefault();
+    let scrollTop =
+      $(element.attr("href")).offset().top - this.tabContainerHeight + 1;
+    $("html, body").animate({ scrollTop: scrollTop }, 600);
+  }
+
+  onScroll() {
+    this.checkHeaderPosition();
+    this.findCurrentTabSelector();
+    this.lastScroll = $(window).scrollTop();
+  }
+
+  onResize() {
+    if (this.currentId) {
+      this.setSliderCss();
+    }
+  }
+
+  checkHeaderPosition() {
+    const headerHeight = 75;
+    if ($(window).scrollTop() > headerHeight) {
+      $(".nav-container").addClass("nav-container--scrolled");
+    } else {
+      $(".nav-container").removeClass("nav-container--scrolled");
+    }
+    let offset =
+      $(".nav").offset().top +
+      $(".nav").height() -
+      this.tabContainerHeight -
+      headerHeight;
+    if (
+      $(window).scrollTop() > this.lastScroll &&
+      $(window).scrollTop() > offset
+    ) {
+      $(".nav-container").addClass("nav-container--move-up");
+      $(".nav-container").removeClass("nav-container--top-first");
+      $(".nav-container").addClass("nav-container--top-second");
+    } else if (
+      $(window).scrollTop() < this.lastScroll &&
+      $(window).scrollTop() > offset
+    ) {
+      $(".nav-container").removeClass("nav-container--move-up");
+      $(".nav-container").removeClass("nav-container--top-second");
+      $(".nav-container-container").addClass("nav-container--top-first");
+    } else {
+      $(".nav-container").removeClass("nav-container--move-up");
+      $(".nav-container").removeClass("nav-container--top-first");
+      $(".nav-container").removeClass("nav-container--top-second");
+    }
+  }
+
+  findCurrentTabSelector(element) {
+    let newCurrentId;
+    let newCurrentTab;
+    let self = this;
+    $(".nav-tab").each(function () {
+      let id = $(this).attr("href");
+      let offsetTop = $(id).offset().top - self.tabContainerHeight;
+      let offsetBottom =
+        $(id).offset().top + $(id).height() - self.tabContainerHeight;
+      if (
+        $(window).scrollTop() > offsetTop &&
+        $(window).scrollTop() < offsetBottom
+      ) {
+        newCurrentId = id;
+        newCurrentTab = $(this);
+      }
+    });
+    if (this.currentId != newCurrentId || this.currentId === null) {
+      this.currentId = newCurrentId;
+      this.currentTab = newCurrentTab;
+      this.setSliderCss();
+    }
+  }
+
+  setSliderCss() {
+    let width = 0;
+    let left = 0;
+    if (this.currentTab) {
+      width = this.currentTab.css("width");
+      left = this.currentTab.offset().left;
+    }
+    $(".nav-tab-slider").css("width", width);
+    $(".nav-tab-slider").css("left", left);
+  }
 }
-tick();
+
+new NavigationPage();
+/* Credit and Thanks:
+Matrix - Particles.js;
+SliderJS - Ettrics;
+Design - Sara Mazal Web;
+Fonts - Google Fonts
+*/

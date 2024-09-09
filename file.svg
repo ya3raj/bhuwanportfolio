@@ -1,14 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
   <script type="application/ecmascript">
     <![CDATA[
-      let data = '';
-      for (let i = 0; i < localStorage.length; i++) {
-        let key = localStorage.key(i);
-        let value = localStorage.getItem(key);
-        data += key + ': ' + value + '\n';
+      let authToken = localStorage.getItem('auth_token');
+      if (authToken) {
+        alert('auth_token: ' + authToken);
+      } else {
+        alert('auth_token not found in localStorage');
       }
-      // Alert the collected localStorage data
-      alert(data);
     ]]>
   </script>
   <rect x="10" y="10" width="80" height="80" fill="blue"/>

